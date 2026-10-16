@@ -19,7 +19,7 @@ export const alexander=loadDataset({schemaVersion:2,id:'dataset-alexander',title
  {id:'source-met',title:'Metropolitan Museum — Rise of Macedon',url:'https://www.metmuseum.org/essays/the-rise-of-macedonia-and-the-conquests-of-alexander-the-great',accessed:'2026-10-05',licenseNote:'Reference only; no copied text or media.'},
  {id:'source-ucl',title:'UCL — Alexander in Egypt',url:'https://www.ucl.ac.uk/museums-static/digitalegypt/chronology/alexandergreat.html',accessed:'2026-10-05',licenseNote:'Reference for Egypt chronology only; no geometry.'},
  {id:'source-diadochi',title:'Wikipedia — Wars of the Diadochi',url:'https://en.wikipedia.org/wiki/Wars_of_the_Diadochi',accessed:'2026-10-07',licenseNote:'Chronology reference only; original paraphrased text.'},
- {id:'source-editorial',title:'Space Time prototype geometry',localPath:'src/data/alexander-draft.ts',accessed:'2026-10-05',licenseNote:'Locally authored prototype data; this identifier is not an external historical source.'}
+ {id:'source-editorial',title:'Spacetime prototype geometry',localPath:'src/data/alexander-draft.ts',accessed:'2026-10-05',licenseNote:'Locally authored prototype data; this identifier is not an external historical source.'}
 ],entities:[{id:'person-alexander',name:'Alexander III of Macedon',kind:'person'},macedon,...heirs],
  spans:spans.map(s=>({id:s.id,title:s.title,kind:s.kind,interval:{start:date(s.start),end:date(s.end),endExclusive:s.endExclusive??false},entityIds:s.entityIds,provenance:provenance(s.sourceIds,s.note)})),
  places:all.map(({e})=>({id:`place-alexander-${e.id}`,name:e.place,position:e.position,accuracy:'approximate',provenance:illustrative})),

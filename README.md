@@ -1,4 +1,4 @@
-# Space Time
+# Spacetime
 
 A custom atlas of history, built with React, TypeScript, Tailwind CSS, pnpm and Vite. MapLibre GL JS draws bundled Natural Earth geography. No API key or external tile service is used at runtime.
 

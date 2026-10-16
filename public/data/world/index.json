@@ -1,0 +1,692 @@
+{
+ "source": "Cliopatria v0.2.1",
+ "tolerance": 0.03,
+ "tiles": [
+  {
+   "start": -5000,
+   "end": -4901,
+   "url": "/data/world/world-m5000.json",
+   "count": 0,
+   "bytes": 42
+  },
+  {
+   "start": -4900,
+   "end": -4801,
+   "url": "/data/world/world-m4900.json",
+   "count": 0,
+   "bytes": 42
+  },
+  {
+   "start": -4800,
+   "end": -4701,
+   "url": "/data/world/world-m4800.json",
+   "count": 0,
+   "bytes": 42
+  },
+  {
+   "start": -4700,
+   "end": -4601,
+   "url": "/data/world/world-m4700.json",
+   "count": 0,
+   "bytes": 42
+  },
+  {
+   "start": -4600,
+   "end": -4501,
+   "url": "/data/world/world-m4600.json",
+   "count": 0,
+   "bytes": 42
+  },
+  {
+   "start": -4500,
+   "end": -4401,
+   "url": "/data/world/world-m4500.json",
+   "count": 0,
+   "bytes": 42
+  },
+  {
+   "start": -4400,
+   "end": -4301,
+   "url": "/data/world/world-m4400.json",
+   "count": 0,
+   "bytes": 42
+  },
+  {
+   "start": -4300,
+   "end": -4201,
+   "url": "/data/world/world-m4300.json",
+   "count": 0,
+   "bytes": 42
+  },
+  {
+   "start": -4200,
+   "end": -4101,
+   "url": "/data/world/world-m4200.json",
+   "count": 0,
+   "bytes": 42
+  },
+  {
+   "start": -4100,
+   "end": -4001,
+   "url": "/data/world/world-m4100.json",
+   "count": 0,
+   "bytes": 42
+  },
+  {
+   "start": -4000,
+   "end": -3901,
+   "url": "/data/world/world-m4000.json",
+   "count": 0,
+   "bytes": 42
+  },
+  {
+   "start": -3900,
+   "end": -3801,
+   "url": "/data/world/world-m3900.json",
+   "count": 0,
+   "bytes": 42
+  },
+  {
+   "start": -3800,
+   "end": -3701,
+   "url": "/data/world/world-m3800.json",
+   "count": 0,
+   "bytes": 42
+  },
+  {
+   "start": -3700,
+   "end": -3601,
+   "url": "/data/world/world-m3700.json",
+   "count": 0,
+   "bytes": 42
+  },
+  {
+   "start": -3600,
+   "end": -3501,
+   "url": "/data/world/world-m3600.json",
+   "count": 0,
+   "bytes": 42
+  },
+  {
+   "start": -3500,
+   "end": -3401,
+   "url": "/data/world/world-m3500.json",
+   "count": 0,
+   "bytes": 42
+  },
+  {
+   "start": -3400,
+   "end": -3301,
+   "url": "/data/world/world-m3400.json",
+   "count": 1,
+   "bytes": 667
+  },
+  {
+   "start": -3300,
+   "end": -3201,
+   "url": "/data/world/world-m3300.json",
+   "count": 1,
+   "bytes": 667
+  },
+  {
+   "start": -3200,
+   "end": -3101,
+   "url": "/data/world/world-m3200.json",
+   "count": 3,
+   "bytes": 1725
+  },
+  {
+   "start": -3100,
+   "end": -3001,
+   "url": "/data/world/world-m3100.json",
+   "count": 2,
+   "bytes": 1099
+  },
+  {
+   "start": -3000,
+   "end": -2901,
+   "url": "/data/world/world-m3000.json",
+   "count": 5,
+   "bytes": 3197
+  },
+  {
+   "start": -2900,
+   "end": -2801,
+   "url": "/data/world/world-m2900.json",
+   "count": 4,
+   "bytes": 2513
+  },
+  {
+   "start": -2800,
+   "end": -2701,
+   "url": "/data/world/world-m2800.json",
+   "count": 4,
+   "bytes": 2513
+  },
+  {
+   "start": -2700,
+   "end": -2601,
+   "url": "/data/world/world-m2700.json",
+   "count": 7,
+   "bytes": 5169
+  },
+  {
+   "start": -2600,
+   "end": -2501,
+   "url": "/data/world/world-m2600.json",
+   "count": 3,
+   "bytes": 2697
+  },
+  {
+   "start": -2500,
+   "end": -2401,
+   "url": "/data/world/world-m2500.json",
+   "count": 6,
+   "bytes": 6553
+  },
+  {
+   "start": -2400,
+   "end": -2301,
+   "url": "/data/world/world-m2400.json",
+   "count": 3,
+   "bytes": 3897
+  },
+  {
+   "start": -2300,
+   "end": -2201,
+   "url": "/data/world/world-m2300.json",
+   "count": 9,
+   "bytes": 13632
+  },
+  {
+   "start": -2200,
+   "end": -2101,
+   "url": "/data/world/world-m2200.json",
+   "count": 7,
+   "bytes": 10185
+  },
+  {
+   "start": -2100,
+   "end": -2001,
+   "url": "/data/world/world-m2100.json",
+   "count": 10,
+   "bytes": 9653
+  },
+  {
+   "start": -2000,
+   "end": -1901,
+   "url": "/data/world/world-m2000.json",
+   "count": 10,
+   "bytes": 11237
+  },
+  {
+   "start": -1900,
+   "end": -1801,
+   "url": "/data/world/world-m1900.json",
+   "count": 4,
+   "bytes": 5352
+  },
+  {
+   "start": -1800,
+   "end": -1701,
+   "url": "/data/world/world-m1800.json",
+   "count": 17,
+   "bytes": 18574
+  },
+  {
+   "start": -1700,
+   "end": -1601,
+   "url": "/data/world/world-m1700.json",
+   "count": 11,
+   "bytes": 9788
+  },
+  {
+   "start": -1600,
+   "end": -1501,
+   "url": "/data/world/world-m1600.json",
+   "count": 16,
+   "bytes": 12034
+  },
+  {
+   "start": -1500,
+   "end": -1401,
+   "url": "/data/world/world-m1500.json",
+   "count": 20,
+   "bytes": 16945
+  },
+  {
+   "start": -1400,
+   "end": -1301,
+   "url": "/data/world/world-m1400.json",
+   "count": 18,
+   "bytes": 20145
+  },
+  {
+   "start": -1300,
+   "end": -1201,
+   "url": "/data/world/world-m1300.json",
+   "count": 24,
+   "bytes": 37072
+  },
+  {
+   "start": -1200,
+   "end": -1101,
+   "url": "/data/world/world-m1200.json",
+   "count": 17,
+   "bytes": 26265
+  },
+  {
+   "start": -1100,
+   "end": -1001,
+   "url": "/data/world/world-m1100.json",
+   "count": 13,
+   "bytes": 15275
+  },
+  {
+   "start": -1000,
+   "end": -901,
+   "url": "/data/world/world-m1000.json",
+   "count": 20,
+   "bytes": 19413
+  },
+  {
+   "start": -900,
+   "end": -801,
+   "url": "/data/world/world-m900.json",
+   "count": 23,
+   "bytes": 19559
+  },
+  {
+   "start": -800,
+   "end": -701,
+   "url": "/data/world/world-m800.json",
+   "count": 57,
+   "bytes": 50969
+  },
+  {
+   "start": -700,
+   "end": -601,
+   "url": "/data/world/world-m700.json",
+   "count": 79,
+   "bytes": 108020
+  },
+  {
+   "start": -600,
+   "end": -501,
+   "url": "/data/world/world-m600.json",
+   "count": 85,
+   "bytes": 120521
+  },
+  {
+   "start": -500,
+   "end": -401,
+   "url": "/data/world/world-m500.json",
+   "count": 130,
+   "bytes": 161080
+  },
+  {
+   "start": -400,
+   "end": -301,
+   "url": "/data/world/world-m400.json",
+   "count": 155,
+   "bytes": 297441
+  },
+  {
+   "start": -300,
+   "end": -201,
+   "url": "/data/world/world-m300.json",
+   "count": 319,
+   "bytes": 632142
+  },
+  {
+   "start": -200,
+   "end": -101,
+   "url": "/data/world/world-m200.json",
+   "count": 158,
+   "bytes": 321897
+  },
+  {
+   "start": -100,
+   "end": -1,
+   "url": "/data/world/world-m100.json",
+   "count": 190,
+   "bytes": 571618
+  },
+  {
+   "start": 0,
+   "end": 99,
+   "url": "/data/world/world-0.json",
+   "count": 147,
+   "bytes": 472875
+  },
+  {
+   "start": 100,
+   "end": 199,
+   "url": "/data/world/world-100.json",
+   "count": 126,
+   "bytes": 430774
+  },
+  {
+   "start": 200,
+   "end": 299,
+   "url": "/data/world/world-200.json",
+   "count": 153,
+   "bytes": 484599
+  },
+  {
+   "start": 300,
+   "end": 399,
+   "url": "/data/world/world-300.json",
+   "count": 232,
+   "bytes": 779269
+  },
+  {
+   "start": 400,
+   "end": 499,
+   "url": "/data/world/world-400.json",
+   "count": 305,
+   "bytes": 685375
+  },
+  {
+   "start": 500,
+   "end": 599,
+   "url": "/data/world/world-500.json",
+   "count": 270,
+   "bytes": 632531
+  },
+  {
+   "start": 600,
+   "end": 699,
+   "url": "/data/world/world-600.json",
+   "count": 425,
+   "bytes": 1056849
+  },
+  {
+   "start": 700,
+   "end": 799,
+   "url": "/data/world/world-700.json",
+   "count": 359,
+   "bytes": 747771
+  },
+  {
+   "start": 800,
+   "end": 899,
+   "url": "/data/world/world-800.json",
+   "count": 528,
+   "bytes": 1002327
+  },
+  {
+   "start": 900,
+   "end": 999,
+   "url": "/data/world/world-900.json",
+   "count": 531,
+   "bytes": 795287
+  },
+  {
+   "start": 1000,
+   "end": 1099,
+   "url": "/data/world/world-1000.json",
+   "count": 713,
+   "bytes": 931896
+  },
+  {
+   "start": 1100,
+   "end": 1199,
+   "url": "/data/world/world-1100.json",
+   "count": 541,
+   "bytes": 695880
+  },
+  {
+   "start": 1200,
+   "end": 1299,
+   "url": "/data/world/world-1200.json",
+   "count": 862,
+   "bytes": 1242329
+  },
+  {
+   "start": 1300,
+   "end": 1399,
+   "url": "/data/world/world-1300.json",
+   "count": 774,
+   "bytes": 1160036
+  },
+  {
+   "start": 1400,
+   "end": 1499,
+   "url": "/data/world/world-1400.json",
+   "count": 880,
+   "bytes": 1719069
+  },
+  {
+   "start": 1500,
+   "end": 1549,
+   "url": "/data/world/world-1500.json",
+   "count": 531,
+   "bytes": 1184766
+  },
+  {
+   "start": 1550,
+   "end": 1599,
+   "url": "/data/world/world-1550.json",
+   "count": 416,
+   "bytes": 1153608
+  },
+  {
+   "start": 1600,
+   "end": 1649,
+   "url": "/data/world/world-1600.json",
+   "count": 460,
+   "bytes": 1570269
+  },
+  {
+   "start": 1650,
+   "end": 1699,
+   "url": "/data/world/world-1650.json",
+   "count": 440,
+   "bytes": 1519301
+  },
+  {
+   "start": 1700,
+   "end": 1749,
+   "url": "/data/world/world-1700.json",
+   "count": 494,
+   "bytes": 1893994
+  },
+  {
+   "start": 1750,
+   "end": 1759,
+   "url": "/data/world/world-1750.json",
+   "count": 207,
+   "bytes": 600975
+  },
+  {
+   "start": 1760,
+   "end": 1769,
+   "url": "/data/world/world-1760.json",
+   "count": 242,
+   "bytes": 778499
+  },
+  {
+   "start": 1770,
+   "end": 1779,
+   "url": "/data/world/world-1770.json",
+   "count": 219,
+   "bytes": 757360
+  },
+  {
+   "start": 1780,
+   "end": 1789,
+   "url": "/data/world/world-1780.json",
+   "count": 197,
+   "bytes": 596822
+  },
+  {
+   "start": 1790,
+   "end": 1799,
+   "url": "/data/world/world-1790.json",
+   "count": 321,
+   "bytes": 1155956
+  },
+  {
+   "start": 1800,
+   "end": 1809,
+   "url": "/data/world/world-1800.json",
+   "count": 329,
+   "bytes": 1079982
+  },
+  {
+   "start": 1810,
+   "end": 1819,
+   "url": "/data/world/world-1810.json",
+   "count": 320,
+   "bytes": 1004563
+  },
+  {
+   "start": 1820,
+   "end": 1829,
+   "url": "/data/world/world-1820.json",
+   "count": 258,
+   "bytes": 825050
+  },
+  {
+   "start": 1830,
+   "end": 1839,
+   "url": "/data/world/world-1830.json",
+   "count": 217,
+   "bytes": 631526
+  },
+  {
+   "start": 1840,
+   "end": 1849,
+   "url": "/data/world/world-1840.json",
+   "count": 276,
+   "bytes": 861698
+  },
+  {
+   "start": 1850,
+   "end": 1859,
+   "url": "/data/world/world-1850.json",
+   "count": 282,
+   "bytes": 1062571
+  },
+  {
+   "start": 1860,
+   "end": 1869,
+   "url": "/data/world/world-1860.json",
+   "count": 294,
+   "bytes": 1217035
+  },
+  {
+   "start": 1870,
+   "end": 1879,
+   "url": "/data/world/world-1870.json",
+   "count": 200,
+   "bytes": 831648
+  },
+  {
+   "start": 1880,
+   "end": 1889,
+   "url": "/data/world/world-1880.json",
+   "count": 154,
+   "bytes": 529238
+  },
+  {
+   "start": 1890,
+   "end": 1899,
+   "url": "/data/world/world-1890.json",
+   "count": 166,
+   "bytes": 755549
+  },
+  {
+   "start": 1900,
+   "end": 1909,
+   "url": "/data/world/world-1900.json",
+   "count": 141,
+   "bytes": 709207
+  },
+  {
+   "start": 1910,
+   "end": 1919,
+   "url": "/data/world/world-1910.json",
+   "count": 287,
+   "bytes": 1888626
+  },
+  {
+   "start": 1920,
+   "end": 1929,
+   "url": "/data/world/world-1920.json",
+   "count": 200,
+   "bytes": 1369829
+  },
+  {
+   "start": 1930,
+   "end": 1939,
+   "url": "/data/world/world-1930.json",
+   "count": 207,
+   "bytes": 1042074
+  },
+  {
+   "start": 1940,
+   "end": 1949,
+   "url": "/data/world/world-1940.json",
+   "count": 302,
+   "bytes": 2216160
+  },
+  {
+   "start": 1950,
+   "end": 1959,
+   "url": "/data/world/world-1950.json",
+   "count": 163,
+   "bytes": 665593
+  },
+  {
+   "start": 1960,
+   "end": 1969,
+   "url": "/data/world/world-1960.json",
+   "count": 200,
+   "bytes": 661250
+  },
+  {
+   "start": 1970,
+   "end": 1979,
+   "url": "/data/world/world-1970.json",
+   "count": 237,
+   "bytes": 837114
+  },
+  {
+   "start": 1980,
+   "end": 1989,
+   "url": "/data/world/world-1980.json",
+   "count": 198,
+   "bytes": 610821
+  },
+  {
+   "start": 1990,
+   "end": 1999,
+   "url": "/data/world/world-1990.json",
+   "count": 236,
+   "bytes": 695545
+  },
+  {
+   "start": 2000,
+   "end": 2009,
+   "url": "/data/world/world-2000.json",
+   "count": 209,
+   "bytes": 572251
+  },
+  {
+   "start": 2010,
+   "end": 2019,
+   "url": "/data/world/world-2010.json",
+   "count": 201,
+   "bytes": 515480
+  },
+  {
+   "start": 2020,
+   "end": 2024,
+   "url": "/data/world/world-2020.json",
+   "count": 384,
+   "bytes": 909526
+  }
+ ]
+}

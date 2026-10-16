@@ -1,0 +1,413 @@
+{
+ "tileSize": 100,
+ "bounds": [
+  -3999,
+  2026
+ ],
+ "facets": [
+  {
+   "id": "mathematician",
+   "label": "Mathematician",
+   "color": "#3e5f8a"
+  },
+  {
+   "id": "philosopher",
+   "label": "Philosopher",
+   "color": "#5b6f9a"
+  },
+  {
+   "id": "writer",
+   "label": "Writer",
+   "color": "#6d5a8a"
+  },
+  {
+   "id": "scientist",
+   "label": "Scientist",
+   "color": "#4f7f8f"
+  },
+  {
+   "id": "explorer",
+   "label": "Explorer",
+   "color": "#3f7a72"
+  },
+  {
+   "id": "ruler",
+   "label": "Ruler",
+   "color": "#8a5a7a"
+  },
+  {
+   "id": "military",
+   "label": "Military",
+   "color": "#9b5c62"
+  },
+  {
+   "id": "religious",
+   "label": "Religious figure",
+   "color": "#7a7350"
+  },
+  {
+   "id": "artist",
+   "label": "Artist",
+   "color": "#b07c4f"
+  },
+  {
+   "id": "musician",
+   "label": "Musician",
+   "color": "#a15d68"
+  },
+  {
+   "id": "public",
+   "label": "Public life",
+   "color": "#7d8a5a"
+  },
+  {
+   "id": "sport",
+   "label": "Sport",
+   "color": "#5e8a6e"
+  }
+ ],
+ "tiles": [
+  {
+   "start": -4000,
+   "end": -3901,
+   "url": "/data/timeline/people-m4000.json",
+   "count": 1
+  },
+  {
+   "start": -3500,
+   "end": -3401,
+   "url": "/data/timeline/people-m3500.json",
+   "count": 1
+  },
+  {
+   "start": -3400,
+   "end": -3301,
+   "url": "/data/timeline/people-m3400.json",
+   "count": 1
+  },
+  {
+   "start": -3300,
+   "end": -3201,
+   "url": "/data/timeline/people-m3300.json",
+   "count": 3
+  },
+  {
+   "start": -3200,
+   "end": -3101,
+   "url": "/data/timeline/people-m3200.json",
+   "count": 5
+  },
+  {
+   "start": -3100,
+   "end": -3001,
+   "url": "/data/timeline/people-m3100.json",
+   "count": 9
+  },
+  {
+   "start": -3000,
+   "end": -2901,
+   "url": "/data/timeline/people-m3000.json",
+   "count": 9
+  },
+  {
+   "start": -2900,
+   "end": -2801,
+   "url": "/data/timeline/people-m2900.json",
+   "count": 6
+  },
+  {
+   "start": -2800,
+   "end": -2701,
+   "url": "/data/timeline/people-m2800.json",
+   "count": 11
+  },
+  {
+   "start": -2700,
+   "end": -2601,
+   "url": "/data/timeline/people-m2700.json",
+   "count": 21
+  },
+  {
+   "start": -2600,
+   "end": -2501,
+   "url": "/data/timeline/people-m2600.json",
+   "count": 24
+  },
+  {
+   "start": -2500,
+   "end": -2401,
+   "url": "/data/timeline/people-m2500.json",
+   "count": 22
+  },
+  {
+   "start": -2400,
+   "end": -2301,
+   "url": "/data/timeline/people-m2400.json",
+   "count": 14
+  },
+  {
+   "start": -2300,
+   "end": -2201,
+   "url": "/data/timeline/people-m2300.json",
+   "count": 20
+  },
+  {
+   "start": -2200,
+   "end": -2101,
+   "url": "/data/timeline/people-m2200.json",
+   "count": 28
+  },
+  {
+   "start": -2100,
+   "end": -2001,
+   "url": "/data/timeline/people-m2100.json",
+   "count": 19
+  },
+  {
+   "start": -2000,
+   "end": -1901,
+   "url": "/data/timeline/people-m2000.json",
+   "count": 25
+  },
+  {
+   "start": -1900,
+   "end": -1801,
+   "url": "/data/timeline/people-m1900.json",
+   "count": 27
+  },
+  {
+   "start": -1800,
+   "end": -1701,
+   "url": "/data/timeline/people-m1800.json",
+   "count": 35
+  },
+  {
+   "start": -1700,
+   "end": -1601,
+   "url": "/data/timeline/people-m1700.json",
+   "count": 29
+  },
+  {
+   "start": -1600,
+   "end": -1501,
+   "url": "/data/timeline/people-m1600.json",
+   "count": 33
+  },
+  {
+   "start": -1500,
+   "end": -1401,
+   "url": "/data/timeline/people-m1500.json",
+   "count": 28
+  },
+  {
+   "start": -1400,
+   "end": -1301,
+   "url": "/data/timeline/people-m1400.json",
+   "count": 38
+  },
+  {
+   "start": -1300,
+   "end": -1201,
+   "url": "/data/timeline/people-m1300.json",
+   "count": 36
+  },
+  {
+   "start": -1200,
+   "end": -1101,
+   "url": "/data/timeline/people-m1200.json",
+   "count": 35
+  },
+  {
+   "start": -1100,
+   "end": -1001,
+   "url": "/data/timeline/people-m1100.json",
+   "count": 36
+  },
+  {
+   "start": -1000,
+   "end": -901,
+   "url": "/data/timeline/people-m1000.json",
+   "count": 41
+  },
+  {
+   "start": -900,
+   "end": -801,
+   "url": "/data/timeline/people-m900.json",
+   "count": 36
+  },
+  {
+   "start": -800,
+   "end": -701,
+   "url": "/data/timeline/people-m800.json",
+   "count": 39
+  },
+  {
+   "start": -700,
+   "end": -601,
+   "url": "/data/timeline/people-m700.json",
+   "count": 38
+  },
+  {
+   "start": -600,
+   "end": -501,
+   "url": "/data/timeline/people-m600.json",
+   "count": 46
+  },
+  {
+   "start": -500,
+   "end": -401,
+   "url": "/data/timeline/people-m500.json",
+   "count": 48
+  },
+  {
+   "start": -400,
+   "end": -301,
+   "url": "/data/timeline/people-m400.json",
+   "count": 40
+  },
+  {
+   "start": -300,
+   "end": -201,
+   "url": "/data/timeline/people-m300.json",
+   "count": 40
+  },
+  {
+   "start": -200,
+   "end": -101,
+   "url": "/data/timeline/people-m200.json",
+   "count": 39
+  },
+  {
+   "start": -100,
+   "end": -1,
+   "url": "/data/timeline/people-m100.json",
+   "count": 41
+  },
+  {
+   "start": 0,
+   "end": 99,
+   "url": "/data/timeline/people-0.json",
+   "count": 49
+  },
+  {
+   "start": 100,
+   "end": 199,
+   "url": "/data/timeline/people-100.json",
+   "count": 42
+  },
+  {
+   "start": 200,
+   "end": 299,
+   "url": "/data/timeline/people-200.json",
+   "count": 68
+  },
+  {
+   "start": 300,
+   "end": 399,
+   "url": "/data/timeline/people-300.json",
+   "count": 55
+  },
+  {
+   "start": 400,
+   "end": 499,
+   "url": "/data/timeline/people-400.json",
+   "count": 46
+  },
+  {
+   "start": 500,
+   "end": 599,
+   "url": "/data/timeline/people-500.json",
+   "count": 43
+  },
+  {
+   "start": 600,
+   "end": 699,
+   "url": "/data/timeline/people-600.json",
+   "count": 46
+  },
+  {
+   "start": 700,
+   "end": 799,
+   "url": "/data/timeline/people-700.json",
+   "count": 38
+  },
+  {
+   "start": 800,
+   "end": 899,
+   "url": "/data/timeline/people-800.json",
+   "count": 44
+  },
+  {
+   "start": 900,
+   "end": 999,
+   "url": "/data/timeline/people-900.json",
+   "count": 38
+  },
+  {
+   "start": 1000,
+   "end": 1099,
+   "url": "/data/timeline/people-1000.json",
+   "count": 52
+  },
+  {
+   "start": 1100,
+   "end": 1199,
+   "url": "/data/timeline/people-1100.json",
+   "count": 56
+  },
+  {
+   "start": 1200,
+   "end": 1299,
+   "url": "/data/timeline/people-1200.json",
+   "count": 56
+  },
+  {
+   "start": 1300,
+   "end": 1399,
+   "url": "/data/timeline/people-1300.json",
+   "count": 54
+  },
+  {
+   "start": 1400,
+   "end": 1499,
+   "url": "/data/timeline/people-1400.json",
+   "count": 89
+  },
+  {
+   "start": 1500,
+   "end": 1599,
+   "url": "/data/timeline/people-1500.json",
+   "count": 121
+  },
+  {
+   "start": 1600,
+   "end": 1699,
+   "url": "/data/timeline/people-1600.json",
+   "count": 114
+  },
+  {
+   "start": 1700,
+   "end": 1799,
+   "url": "/data/timeline/people-1700.json",
+   "count": 144
+  },
+  {
+   "start": 1800,
+   "end": 1899,
+   "url": "/data/timeline/people-1800.json",
+   "count": 271
+  },
+  {
+   "start": 1900,
+   "end": 1999,
+   "url": "/data/timeline/people-1900.json",
+   "count": 359
+  },
+  {
+   "start": 2000,
+   "end": 2099,
+   "url": "/data/timeline/people-2000.json",
+   "count": 142
+  }
+ ]
+}

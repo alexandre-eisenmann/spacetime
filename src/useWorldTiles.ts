@@ -2,7 +2,8 @@ import {useEffect,useMemo,useRef,useState} from 'react';
 import type {FeatureCollection,MultiPolygon} from 'geojson';
 import {asset} from './asset';
 
-export type PolityProps={n:string;f:number;t:number;a:number;w?:string;c:string;lx:number;ly:number};
+// e: the editorial correction to Cliopatria's name or years for this row, if any.
+export type PolityProps={n:string;f:number;t:number;a:number;w?:string;e?:string;c:string;lx:number;ly:number};
 export type WorldTile=FeatureCollection<MultiPolygon,PolityProps>;
 type WorldIndex={source:string;tiles:{start:number;end:number;url:string;count:number}[]};
 

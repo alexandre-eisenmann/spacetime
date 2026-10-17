@@ -2,10 +2,11 @@
 // Usage: pnpm data:world [path-to-cliopatria.geojson]
 // Every non-aggregate Cliopatria polity is kept with its published name and years; geometry is simplified for
 // world-scale display (Douglas–Peucker at 0.03°, rounded to 0.01°, about 1 km), so borders are approximate
-// below regional scale.
+// below regional scale. Editorial corrections (scripts/cliopatria-corrections.ts) are applied first.
 import {readFileSync,writeFileSync,mkdirSync,rmSync} from 'node:fs';
 import polylabel from 'polylabel';
 import {writePolities} from './import-polities';
+import {correctCliopatria} from './cliopatria-corrections';
 
 const release='v0.2.1';
 const input=process.argv[2]??'data-raw/cliopatria_polities_only_v021.geojson';
@@ -44,15 +45,16 @@ function cleanRing(ring:Ring):Ring|undefined{
 function colour(name:string){let h=2166136261;for(const c of name)h=Math.imul(h^c.charCodeAt(0),16777619);h>>>=0;return `hsl(${h%360} ${28+(h>>9)%18}% ${52+(h>>17)%14}%)`}
 
 const source=JSON.parse(readFileSync(input,'utf8'));
+const rows=correctCliopatria<any>(source.features);
 const features:any[]=[];let dropped=0;
-for(const f of source.features){
+for(const f of rows){
  const p=f.properties;
  if(p.ToYear<firstYear||p.Name.startsWith('('))continue;
  const polygons=(f.geometry.type==='Polygon'?[f.geometry.coordinates]:f.geometry.coordinates).map((rings:Ring[])=>{const [outer,...holes]=rings.map(cleanRing);return outer?[outer,...holes.filter(Boolean)]:undefined}).filter(Boolean) as Ring[][];
  if(!polygons.length){dropped++;continue}
  const largest=polygons.reduce((a,b)=>area(b[0])>area(a[0])?b:a);
  const [lx,ly]=polylabel(largest,0.05);
- features.push({type:'Feature',properties:{n:p.Name,f:astronomical(p.FromYear),t:astronomical(p.ToYear),a:Math.round(p.Area),w:p.Wikipedia||undefined,c:colour(p.Name),lx:Math.round(lx*100)/100,ly:Math.round(ly*100)/100},geometry:{type:'MultiPolygon',coordinates:polygons}});
+ features.push({type:'Feature',properties:{n:p.Name,f:astronomical(p.FromYear),t:astronomical(p.ToYear),a:Math.round(p.Area),w:p.Wikipedia||undefined,e:p.Correction,c:colour(p.Name),lx:Math.round(lx*100)/100,ly:Math.round(ly*100)/100},geometry:{type:'MultiPolygon',coordinates:polygons}});
 }
 
 rmSync(outDir,{recursive:true,force:true});mkdirSync(outDir,{recursive:true});
@@ -68,4 +70,4 @@ for(let start=Math.floor(firstYear/100)*100;start<=last;start+=tileSize(start)){
 writeFileSync(`${outDir}/index.json`,JSON.stringify({source:`Cliopatria ${release}`,tolerance,tiles},null,1));
 const total=tiles.reduce((s,t)=>s+t.bytes,0);
 console.log(`${features.length} polity rows (${dropped} too small after simplification) in ${tiles.length} tiles, ${(total/1e6).toFixed(1)} MB total, largest ${(Math.max(...tiles.map(t=>t.bytes))/1e6).toFixed(2)} MB`);
-writePolities(source.features.map((f:any)=>f.properties));
+writePolities(rows.map((f:any)=>f.properties));

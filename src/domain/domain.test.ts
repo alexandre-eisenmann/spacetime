@@ -8,8 +8,12 @@ const period='campaign-alexander';
 const polygonIndex=catalog.features.findIndex(f=>f.geometry.type==='Polygon');
 const macedonIndex=catalog.features.findIndex(f=>f.spanIds.includes(period)&&f.interval.start.latest===fromEra(336,'BCE'));
 test('BCE / CE has no displayed year zero and arithmetic crosses the boundary correctly',()=>{assert.equal(fromEra(1,'BCE'),0);assert.equal(fromEra(1,'CE'),1);assert.equal(formatYear(0),'1 BCE');assert.equal(formatYear(-330),'331 BCE');assert.throws(()=>fromEra(0,'BCE'))});
-test('Alexander’s span shows one Cliopatria Macedonian Empire shape per year, only within the campaign dates',()=>{for(const [year,count] of [[337,0],[336,1],[331,1],[326,1],[323,1],[322,0]])assert.equal(featuresAt(catalog,fromEra(year,'BCE'),period).features.length,count);assert.ok(featuresAt(catalog,fromEra(336,'BCE'),period).features.every(f=>f.properties?.title==='Macedonian Empire'))});
-test('chronology selects the latest past event',()=>assert.equal(latestEvent(alexander,period,fromEra(335,'BCE'))?.title,'A young king'));
+test('Alexander’s span shows one Macedonian Empire shape per year, then the regents beside it, only within the campaign dates',()=>{
+ for(const [year,count] of [[337,0],[336,1],[331,1],[326,1],[323,3],[322,0]])assert.equal(featuresAt(catalog,fromEra(year,'BCE'),period).features.length,count);
+ for(const year of [336,331,328,325])assert.deepEqual(featuresAt(catalog,fromEra(year,'BCE'),period).features.map(f=>f.properties?.title),['Macedonian Empire']);
+ assert.deepEqual(featuresAt(catalog,fromEra(323,'BCE'),period).features.map(f=>f.properties?.title).sort(),['Laomedon','Macedonian Empire','Perdiccas']);
+});
+test('chronology selects the latest past event',()=>{assert.equal(latestEvent(alexander,period,fromEra(336,'BCE'))?.title,'A young king');assert.equal(latestEvent(alexander,period,fromEra(335,'BCE'))?.title,'The fall of Thebes')});
 test('timeline windows remain bounded and contain selected year',()=>{for(let y=-349;y<=-319;y++)for(const span of [5,10,15,20,25,30]){const [a,b]=timeWindow(y,span,[-349,-319]);assert.ok(a<=y&&b>=y&&a>=-349&&b<=-319);assert.equal(b-a,span)}});
 test('data boundary rejects broken references, duplicate IDs, invalid dates and invalid coordinates',()=>{const mutations=[(d:any)=>d.events[0].placeId='missing-place',(d:any)=>d.events[0].id=d.events[1].id,(d:any)=>d.events[0].date.earliest=100,(d:any)=>d.features[polygonIndex].geometry.coordinates[0][0][0]=200,(d:any)=>d.features[polygonIndex].geometry.coordinates[0].pop(),(d:any)=>d.features[polygonIndex].provenance.sourceIds=[]];for(const mutate of mutations){const d=structuredClone(catalog);mutate(d);assert.throws(()=>loadDataset(d))}});
 test('uncertainty is explicit and conservative vs possible visibility differs',()=>{const d=structuredClone(catalog);d.features[macedonIndex].interval.start={earliest:fromEra(337,'BCE'),latest:fromEra(335,'BCE'),certainty:'approximate',precision:'year'};const valid=loadDataset(d);assert.equal(featuresAt(valid,fromEra(336,'BCE'),period,'certain').features.length,0);assert.equal(featuresAt(valid,fromEra(336,'BCE'),period,'possible').features.length,1)});
@@ -259,4 +263,21 @@ test('each playable story has located events students can follow on the map',()=
  assert.ok(war.some(e=>e.title==='The invasion of Poland'&&e.year===1939));
  assert.ok(war.some(e=>e.title==='Japan surrenders'));
  assert.ok(macedon.every(e=>e.position)&&war.every(e=>e.position));
+});
+test('corrected Cliopatria rows: Alexander’s empire grows with each conquest and Persia ends with Darius III',()=>{
+ const years=[334,332,331,328,325];
+ for(let i=1;i<years.length;i++)assert.ok(footprint(-years[i],'campaign-alexander')>footprint(-years[i-1],'campaign-alexander'),`${years[i]} BCE`);
+ assert.ok(footprint(-328,'campaign-alexander')>3*footprint(-331,'campaign-alexander'));
+ for(const year of [331,327,324]){const names=worldAt(fromEra(year,'BCE'));assert.ok(names.includes('Macedonian Empire')&&!names.includes('Ptolemaic Kingdom'),`${year} BCE`)}
+ assert.ok(worldAt(fromEra(330,'BCE')).includes('Achaemenid Empire')&&!worldAt(fromEra(329,'BCE')).includes('Achaemenid Empire'));
+ assert.ok(worldAt(fromEra(307,'BCE')).includes('Ptolemaic Kingdom'));
+ assert.equal(polityEntity('Ptolemaic Kingdom').id,'polity-q2320005');assert.equal(polities.find(p=>p.name==='Ptolemaic Kingdom')!.from,fromEra(307,'BCE'));
+ const relabelled=catalog.features.filter(f=>f.provenance.sourceIds.includes('source-cliopatria-corrections'));
+ assert.ok(relabelled.length>0&&relabelled.every(f=>f.provenance.sourceIds.includes('source-cliopatria')&&f.provenance.method.includes('corrected')));
+});
+test('every curated span gets Cliopatria borders for the polities it is about',()=>{
+ for(const [span,year] of [['period-successors',-301],['conflict-ww2',1942]] as const)assert.ok(footprint(year,span)>0,span);
+ assert.deepEqual(territorial(-301,'period-successors').map(f=>f.properties?.title).sort(),['Kingdom of Lysimachus','Macedonian Empire','Ptolemaic Kingdom','Seleucid Empire']);
+ assert.ok(territorial(-316,'period-successors').some(f=>f.properties?.title==='Polyperchon'));
+ assert.ok(!territorial(-314,'period-successors').some(f=>f.properties?.title==='Polyperchon'));
 });

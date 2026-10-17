@@ -5,7 +5,7 @@ import { Plus, Minus, LocateFixed, Globe2 } from 'lucide-react';
 import { combinedFeaturesAt, activeSpans } from './domain/selectors';
 import { formatYear, type HistoricalDataset } from './domain/schema';
 import { asset } from './asset';
-import type {WorldTile} from './useWorldTiles';
+import type {WorldTile,PolityProps} from './useWorldTiles';
 import type {PersonEntry} from './domain/timeline';
 import 'maplibre-gl/dist/maplibre-gl.css';
 const wikipedia=(phrase:string)=>`https://en.wikipedia.org/wiki/${encodeURIComponent(phrase.replaceAll(' ','_'))}`;
@@ -55,10 +55,10 @@ export function Atlas({data,world,colors,cameraSpan,year,showRegions,showWorld,s
   m.on('mouseenter','world-fill',()=>{m.getCanvas().style.cursor='pointer'});
   m.on('mouseleave','world-fill',()=>{m.getCanvas().style.cursor=''});
   m.on('click','world-fill',e=>{
-   const p=e.features?.[0]?.properties as {n:string;f:number;t:number;w?:string}|undefined;if(!p)return;
+   const p=e.features?.[0]?.properties as Partial<PolityProps>&{n:string;f:number;t:number}|undefined;if(!p)return;
    inspect.current();
    const link=p.w?`<a href="${wikipedia(p.w)}" target="_blank" rel="noreferrer">Wikipedia ↗</a>`:'';
-   new maplibregl.Popup({closeButton:true,maxWidth:'240px',className:'polity-popup'}).setLngLat(e.lngLat).setHTML(`<strong>${escape(p.n)}</strong><span>This border: ${formatYear(p.f)} – ${formatYear(p.t)}</span><small>Border from Cliopatria</small>${link}`).addTo(m);
+   new maplibregl.Popup({closeButton:true,maxWidth:'240px',className:'polity-popup'}).setLngLat(e.lngLat).setHTML(`<strong>${escape(p.n)}</strong><span>This border: ${formatYear(p.f)} – ${formatYear(p.t)}</span><small>Border from Cliopatria</small>${p.e?`<small>${escape(p.e)}</small>`:''}${link}`).addTo(m);
   });
   const placeLabels=()=>{const min=labelThreshold(m.getZoom());let shown=0;polityLabels.current.forEach(marker=>{const area=Number(marker.getElement().dataset.area);const show=area>=min&&shown<70;if(show)shown++;marker.getElement().style.display=show?'block':'none'})};
   m.on('zoomend',placeLabels);

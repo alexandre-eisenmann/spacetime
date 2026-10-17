@@ -1,9 +1,9 @@
-// Persia, Rome and Macedon: Cliopatria polygons, unchanged apart from rounding (see scripts/import-cliopatria.ts).
+// Story polities: Cliopatria polygons, unchanged apart from rounding and cited name/year corrections (see scripts/import-cliopatria.ts).
 // Athens and Sparta: original low-resolution reconstructions from regional chronology; no source map tracing.
 // Each patch has its own validity. Losses end patches; there is no border interpolation.
 import {loadDataset,fromEra,type HistoricalDataset} from '../domain/schema';
 import cliopatria from './cliopatria.json';
-import {polityNames} from './polities';
+import {spanPolities} from './polities';
 const y=(n:number)=>n<0?fromEra(-n,'BCE'):n;
 const date=(n:number)=>({earliest:y(n),latest:y(n),precision:'year' as const,certainty:'exact' as const});
 const year=(n:number)=>({earliest:n,latest:n,precision:'year' as const,certainty:'exact' as const});
@@ -26,22 +26,23 @@ const urls=[
 [gsource,'Delian League membership and dissolution','https://www.worldhistory.org/Delian_League/'],
 [ssource,'Sparta and the Peloponnesian League','https://www.worldhistory.org/Peloponnesian_League/']
 ];
-// A span shows the extracted Cliopatria polygons of the polities it is about, while it is active.
+// A span shows the extracted Cliopatria polygons of the polities it is about, while it is active; a grouping
+// member only in the years it belongs to the grouping.
 const slug=(s:string)=>s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 const sourceYear=(n:number)=>n<0?`${-n} BCE`:n===0?'0':`${n} CE`;
 function cliopatriaFeatures(data:HistoricalDataset){
- return data.spans.flatMap(span=>{
-  const names=polityNames(span.entityIds);
-  const first=span.interval.start.latest,last=span.interval.endExclusive?span.interval.end.earliest-1:span.interval.end.earliest;
-  return cliopatria.rows.filter(r=>names.includes(r.name)&&r.to>=first&&r.from<=last).map(r=>({
-   id:`territory-${span.id}-${slug(r.name)}-${r.from<0?`m${-r.from}`:r.from}`,
+ const rows=cliopatria.rows as {name:string;from:number;to:number;sourceFrom:number;sourceTo:number;wikidata?:string;correction?:string;geometry:unknown}[];
+ return data.spans.flatMap(span=>spanPolities(span).flatMap(w=>rows.filter(r=>r.name===w.name&&r.to>=w.from&&r.from<=w.to).map(r=>{
+  const start=Math.max(r.from,w.from);
+  return {
+   id:`territory-${span.id}-${slug(r.name)}-${start<0?`m${-start}`:start}`,
    title:r.name,
-   interval:{start:year(Math.max(r.from,first)),end:year(Math.min(r.to,last)),endExclusive:false},
+   interval:{start:year(start),end:year(Math.min(r.to,w.to)),endExclusive:false},
    relation:'control' as const,spanIds:[span.id],entityIds:span.entityIds,
    geometry:r.geometry as {type:'MultiPolygon';coordinates:number[][][][]},
-   provenance:{sourceIds:['source-cliopatria'],status:'unreviewed' as const,method:`Cliopatria ${cliopatria.release} polity polygon, imported unchanged except for rounding to 0.0001°`,note:`Cliopatria row “${r.name}”, ${sourceYear(r.sourceFrom)} – ${sourceYear(r.sourceTo)}${r.wikidata?` (Wikidata ${r.wikidata})`:''}. Shown only within this span’s dates. Borders reflect Cliopatria’s reconstruction, which samples territory at intervals.`}
-  }));
- });
+   provenance:{sourceIds:['source-cliopatria',...r.correction?['source-cliopatria-corrections']:[]],status:'unreviewed' as const,method:`Cliopatria ${cliopatria.release} polity polygon, imported unchanged except for rounding to 0.0001°${r.correction?'; name or years editorially corrected':''}`,note:`Cliopatria row “${r.name}”, ${sourceYear(r.sourceFrom)} – ${sourceYear(r.sourceTo)}${r.wikidata?` (Wikidata ${r.wikidata})`:''}.${r.correction?` ${r.correction}`:''} Shown only within this span’s dates. Borders reflect Cliopatria’s reconstruction, which samples territory at intervals.`}
+  };
+ })));
 }
 export function withTerritories(data:HistoricalDataset):HistoricalDataset{
  const sources=urls.map(([id,title,url])=>({id,title,url,accessed:'2026-10-06',licenseNote:'Chronological/regional evidence only. Original schematic coordinates, not copied or traced source maps.'}));
@@ -50,5 +51,5 @@ export function withTerritories(data:HistoricalDataset):HistoricalDataset{
  const events=patches.map(p=>({id:`event-territory-${p.id}`,title:p.title,date:date(p.start),kind:'political',spanIds:[p.span],entityIds:data.spans.find(s=>s.id===p.span)!.entityIds,placeId:placeBySpan[p.span],description:'A new approximate territorial stage is shown. This is a coarse regional reconstruction, not a precise frontier. The map event location is the chapter’s reference city.',provenance:{sourceIds:[p.source,'source-territory-editorial'],status:'illustrative',method:'editorial map-stage milestone',note:'Stage timing and extent simplify processes; reference location is not the site of every conquest.'}}));
  for(const [id,span,year,title] of [['athens-loss',athens,-404,'Athenian maritime sphere dissolves'],['sparta-loss',sparta,-369,'Messenia leaves Spartan control']] as const){events.push({id:`event-territory-${id}`,title,date:date(year),kind:'political',spanIds:[span],entityIds:data.spans.find(s=>s.id===span)!.entityIds,placeId:placeBySpan[span],description:'The territorial layer contracts at this stage. Dates are yearly editorial snapshots of a broader historical process.',provenance:{sourceIds:[span===athens?gsource:ssource,'source-territory-editorial'],status:'illustrative',method:'editorial map-stage milestone',note:'Coarse contraction snapshot; no interpolation.'}})}
  const cliopatriaSource={id:'source-cliopatria',title:`Cliopatria ${cliopatria.release} — Seshat Global History Databank`,url:'https://github.com/Seshat-Global-History-Databank/cliopatria',accessed:'2026-10-06',licenseNote:'CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Polygons extracted for selected polities, clipped in time to each span and rounded to 0.0001°; otherwise unchanged.'};
- return loadDataset({...data,events:[...data.events,...events],sources:[...data.sources,...sources,cliopatriaSource,{id:'source-territory-editorial',title:'Spacetime original territorial sketches',localPath:'src/data/territories.ts',accessed:'2026-10-06',licenseNote:'Original reconstruction; no third-party historical geometry copied.'}],features:[...data.features,...features,...cliopatriaFeatures(data)]});
+ return loadDataset({...data,events:[...data.events,...events],sources:[...data.sources,...sources,cliopatriaSource,{id:'source-cliopatria-corrections',title:'spacetime corrections to Cliopatria names and years',localPath:'scripts/cliopatria-corrections.ts',accessed:'2026-10-17',licenseNote:'Editorial relabelling of published rows, each with cited evidence; geometry is unchanged.'},{id:'source-territory-editorial',title:'spacetime original territorial sketches',localPath:'src/data/territories.ts',accessed:'2026-10-06',licenseNote:'Original reconstruction; no third-party historical geometry copied.'}],features:[...data.features,...features,...cliopatriaFeatures(data)]});
 }

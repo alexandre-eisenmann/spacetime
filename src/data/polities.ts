@@ -31,6 +31,16 @@ export function polityNames(entityIds:string[]){
  return [...new Set(entityIds.flatMap(id=>{const p=byId.get(id);return !p?[]:isGrouping(p)?p.members.map(m=>m.name):[p.name]}))];
 }
 
+// The map polities a span is about and the years it shows each: the span's dates, narrowed for a grouping member
+// to the years Cliopatria lists it in the grouping.
+export function spanPolities(span:{entityIds:string[];interval:{start:{latest:number};end:{earliest:number};endExclusive:boolean}}){
+ const first=span.interval.start.latest,last=span.interval.endExclusive?span.interval.end.earliest-1:span.interval.end.earliest;
+ const ranges=new Map<string,[number,number][]>();
+ const add=(name:string,[f,t]:number[])=>{const from=Math.max(f,first),to=Math.min(t,last);if(from<=to)ranges.set(name,[...(ranges.get(name)??[]),[from,to]])};
+ for(const id of span.entityIds){const p=byId.get(id);if(!p)continue;if(isGrouping(p))for(const m of p.members)m.ranges.forEach(r=>add(m.name,r));else add(p.name,[first,last])}
+ return [...ranges].flatMap(([name,list])=>list.sort((a,b)=>a[0]-b[0]).reduce<[number,number][]>((out,[f,t])=>{const l=out.at(-1);if(l&&f<=l[1]+1)l[1]=Math.max(l[1],t);else out.push([f,t]);return out},[]).map(([from,to])=>({name,from,to})));
+}
+
 // Search entries: the bare name of a grouping, with its member count, alongside the polities themselves.
 export type PolityEntry={id:string;name:string;from:number;to:number;peak:number;subtitle:string};
 export const politySearch:PolityEntry[]=[

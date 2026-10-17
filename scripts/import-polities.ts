@@ -4,6 +4,7 @@
 // the years it is listed in the group. RELATION rows (alliances, allegiances) are not stories' subjects and are skipped.
 // Usage: pnpm data:polities [path-to-cliopatria.geojson]  (also run at the end of pnpm data:world)
 import {readFileSync,writeFileSync} from 'node:fs';
+import {correctCliopatria} from './cliopatria-corrections';
 
 type Props={Name:string;FromYear:number;ToYear:number;Area:number;Type:string;Wikidata:string;Components:string};
 type Range=[number,number];
@@ -65,5 +66,5 @@ export function writePolities(rows:Props[]){
 
 if(process.argv[1]?.endsWith('import-polities.ts')){
  const input=process.argv[2]??'data-raw/cliopatria_polities_only_v021.geojson';
- writePolities(JSON.parse(readFileSync(input,'utf8')).features.map((f:{properties:Props})=>f.properties));
+ writePolities(correctCliopatria<{properties:Props}>(JSON.parse(readFileSync(input,'utf8')).features).map(f=>f.properties));
 }

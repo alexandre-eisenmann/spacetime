@@ -1,13 +1,15 @@
-// Extracts selected polities from a Cliopatria release into src/data/cliopatria.json.
-// Usage: pnpm data:cliopatria [path-to-cliopatria.geojson]
-// Geometry is kept as published; only coordinate precision is reduced.
+// Extracts, from a Cliopatria release, the rows every curated story span shows into src/data/cliopatria.json.
+// Usage: pnpm data:cliopatria [path-to-cliopatria.geojson]  (after pnpm data:world, which writes the polity catalogue)
+// Editorial corrections (scripts/cliopatria-corrections.ts) are applied first; geometry is kept as published and
+// only coordinate precision is reduced.
 import {readFileSync,writeFileSync} from 'node:fs';
 import {validRing} from '../src/domain/geometry';
+import {curated} from '../src/data/curated';
+import {spanPolities} from '../src/data/polities';
+import {correctCliopatria} from './cliopatria-corrections';
 
 const release='v0.2.1';
 const input=process.argv[2]??'data-raw/cliopatria_polities_only_v021.geojson';
-const polities=['Achaemenid Empire','Macedonian Empire','Roman Republic','Roman Empire'];
-const window=[-560,140];
 const precision=1e4;
 
 type Ring=number[][];
@@ -21,13 +23,15 @@ const roundRing=(ring:Ring):Ring=>{
 };
 const ringOf=(ring:Ring)=>{const rounded=roundRing(ring);if(validRing(rounded))return rounded;if(validRing(ring))return ring;throw new Error('Invalid ring in source geometry')};
 
+const wanted=curated.spans.flatMap(spanPolities);
+const polities=[...new Set(wanted.map(w=>w.name))].sort();
 const source=JSON.parse(readFileSync(input,'utf8'));
-const rows=source.features
- .filter((f:any)=>polities.includes(f.properties.Name)&&f.properties.ToYear>=window[0]&&f.properties.FromYear<=window[1])
+const rows=correctCliopatria<any>(source.features)
+ .filter((f:any)=>{const p=f.properties,from=astronomical(p.FromYear),to=astronomical(p.ToYear);return wanted.some(w=>w.name===p.Name&&w.from<=to&&from<=w.to)})
  .map((f:any)=>{
   const p=f.properties;
   const polygons:Ring[][]=f.geometry.type==='Polygon'?[f.geometry.coordinates]:f.geometry.coordinates;
-  return {name:p.Name,from:astronomical(p.FromYear),to:astronomical(p.ToYear),sourceFrom:p.FromYear,sourceTo:p.ToYear,areaKm2:Math.round(p.Area),wikipedia:p.Wikipedia||undefined,wikidata:p.Wikidata||undefined,seshatId:p.SeshatID||undefined,geometry:{type:'MultiPolygon',coordinates:polygons.map(rings=>rings.map(ringOf))}};
+  return {name:p.Name,from:astronomical(p.FromYear),to:astronomical(p.ToYear),sourceFrom:p.FromYear,sourceTo:p.ToYear,areaKm2:Math.round(p.Area),wikipedia:p.Wikipedia||undefined,wikidata:p.Wikidata||undefined,seshatId:p.SeshatID||undefined,correction:p.Correction,geometry:{type:'MultiPolygon',coordinates:polygons.map(rings=>rings.map(ringOf))}};
  })
  .sort((a:any,b:any)=>a.name.localeCompare(b.name)||a.from-b.from);
 

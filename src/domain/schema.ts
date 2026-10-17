@@ -15,7 +15,7 @@ export const datasetSchema=z.object({
  spans:z.array(z.object({id,title:z.string(),kind:z.enum(['campaign','conflict','person-lifetime','polity-phase','era','reign','cultural-period']),interval:intervalSchema,entityIds:z.array(id),provenance}).strict()),
  places:z.array(z.object({id,name:z.string(),position:coordinate,accuracy:z.enum(['approximate','exact']),provenance}).strict()),
  events:z.array(z.object({id,title:z.string(),description:z.string(),date:dateSchema,kind:z.enum(['battle','accession','arrival','death','cultural','political']),spanIds:z.array(id),entityIds:z.array(id),placeId:id,provenance}).strict()),
- features:z.array(z.object({id,title:z.string(),interval:intervalSchema,relation:z.enum(['campaign-extent','control','alliance','influence','route','cultural-area','reference-location']),spanIds:z.array(id),entityIds:z.array(id),geometry,provenance}).strict())
+ features:z.array(z.object({id,title:z.string(),interval:intervalSchema,relation:z.enum(['campaign-extent','control','alliance','influence','route','cultural-area','reference-location']),mode:z.enum(['land','sea']).optional(),routeId:id.optional(),spanIds:z.array(id),entityIds:z.array(id),geometry,provenance}).strict())
 }).strict().superRefine((d,ctx)=>{
  d.sources.forEach(s=>{if(!s.url&&!s.localPath)ctx.addIssue({code:'custom',message:`Source ${s.id} needs a URL or local path`})});
  const groups=[d.sources,d.entities,d.spans,d.places,d.events,d.features];const seen=new Set<string>();
@@ -27,6 +27,8 @@ export const datasetSchema=z.object({
  d.events.forEach(r=>check([r.placeId],d.places,r.id));
  d.spans.forEach(s=>{if(s.kind==='person-lifetime'&&!s.entityIds.some(id=>d.entities.some(e=>e.id===id&&e.kind==='person')))ctx.addIssue({code:'custom',message:`Lifetime ${s.id} requires a person`})});
  d.features.forEach(f=>{if(f.relation==='reference-location'&&f.geometry.type!=='Point')ctx.addIssue({code:'custom',message:'Reference locations must be points'})});
+ // A line is always a route someone travelled, a leg of one named route; only routes say whether they went by land or sea.
+ d.features.forEach(f=>{if((f.relation==='route')!==(f.geometry.type==='LineString'))ctx.addIssue({code:'custom',message:`${f.id}: routes, and only routes, are lines`});if((f.mode||f.routeId)&&f.relation!=='route')ctx.addIssue({code:'custom',message:`${f.id}: only routes have a travel mode or route id`});if(f.relation==='route'&&!f.routeId)ctx.addIssue({code:'custom',message:`${f.id}: a route leg needs its route id`})});
  d.features.forEach(r=>{if(r.relation==='campaign-extent'&&r.provenance.status==='reviewed'&&r.provenance.method==='hand-drawn schematic')ctx.addIssue({code:'custom',message:'Schematic campaign geometry cannot be marked reviewed'})});
 });
 export type HistoricalDataset=z.infer<typeof datasetSchema>;

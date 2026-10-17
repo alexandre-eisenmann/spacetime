@@ -32,6 +32,53 @@ export const events: HistoricalEvent[] = [
  {id:'death',year:-323,title:'An unfinished empire',place:'Babylon · Mesopotamia',position:[44.42,32.54],kind:'death',description:'Alexander falls ill and dies in Babylon in June, aged 32, after reigning less than 13 years. His empire stretches from Greece and Egypt to the Indus. Legend says that when asked who should inherit it, he answered “the strongest”.'},
  {id:'partition',year:-323,title:'Who will rule?',place:'Babylon · Mesopotamia',position:[44.42,32.54],kind:'political',description:'The generals name two kings: Alexander’s half-brother Philip III and his son Alexander IV, born after his death. Perdiccas governs as regent, and the generals share out the provinces: Ptolemy takes Egypt, Lysimachus Thrace and Antigonus Phrygia in Asia Minor, while old Antipater keeps Macedon and Greece.'}
 ];
+// Stops on the routes below, following Arrian's itinerary. Sites with a debated location (Thapsacus, the Persian
+// Gates, Carmania's camp, the fleet's anchorages) use a commonly proposed one.
+const at={
+ pella:[22.52,40.76],amphipolis:[23.85,40.82],sestos:[26.4,40.23],troy:[26.24,39.96],granicus:[27.3,40.3],sardis:[28.04,38.49],miletus:[27.28,37.53],halicarnassus:[27.42,37.04],phaselis:[30.55,36.52],
+ perge:[30.85,36.96],celaenae:[30.16,38.07],gordium:[31.98,39.65],ancyra:[32.86,39.93],cilicianGates:[34.77,37.29],tarsus:[34.9,36.92],issus:[36.2,36.8],
+ marathus:[35.9,34.84],byblos:[35.65,34.12],sidon:[35.37,33.56],tyre:[35.2,33.27],gaza:[34.46,31.5],pelusium:[32.57,31.04],memphis:[31.25,29.85],
+ alexandria:[29.92,31.2],paraetonium:[27.23,31.35],siwa:[25.52,29.2],thapsacus:[38.3,36.0],gaugamela:[43.5,36.4],arbela:[44.01,36.19],babylon:[44.42,32.54],susa:[48.25,32.19],
+ persianGates:[51.6,30.7],persepolis:[52.89,29.93],ecbatana:[48.52,34.8],rhagae:[51.43,35.59],hecatompylos:[54.35,36.17],zadracarta:[54.43,36.84],artacoana:[62.2,34.35],phrada:[62.1,32.37],
+ arachosia:[65.7,31.6],caucasus:[69.27,35.0],drapsaka:[68.86,36.73],bactra:[66.9,36.76],maracanda:[66.96,39.65],eschate:[69.62,40.28],nautaka:[66.83,39.05],
+ nicaea:[70.45,34.43],peucelaotis:[71.73,34.15],taxila:[72.83,33.75],hydaspes:[73.5,32.8],hyphasis:[75.0,31.6],malli:[71.47,30.2],patala:[68.37,25.4],oreitae:[66.31,26.23],gedrosia:[63,26],pura:[60.47,27.2],carmania:[57.3,27.9],
+ pasargadae:[53.18,30.2],opis:[44.5,33.25],
+ indusMouth:[67.4,24.5],ormara:[64.63,25.2],gwadar:[62.33,25.12],chabahar:[60.64,25.29],harmozia:[57.08,27.15],qeshm:[56.0,26.75],kish:[54.0,26.55],bushehr:[50.83,28.97],karunMouth:[48.5,30.0],
+ lysimachia:[26.75,40.55],lampsacus:[26.69,40.35],dorylaeum:[30.52,39.78],heraclea:[31.42,41.28],antigonia:[36.17,36.2],samosata:[38.52,37.53],mazaca:[35.48,38.73],ipsus:[31,38.6]
+} satisfies Record<string,[number,number]>;
+export type RouteDraft={id:string;title:string;mode?:'land'|'sea';span:'campaign-alexander'|'period-successors';start:[number,number];until:number;legs:{year:number;certainty?:'approximate';via:[number,number][]}[]};
+export const routes:RouteDraft[]=[
+ {id:'route-alexander',title:'Alexander’s army',span:'campaign-alexander',start:at.pella,until:-323,legs:[
+  {year:-334,via:[at.amphipolis,at.sestos,at.troy,at.granicus,at.sardis,at.miletus,at.halicarnassus,at.phaselis]},
+  {year:-333,via:[at.perge,at.celaenae,at.gordium,at.ancyra,at.cilicianGates,at.tarsus,at.issus]},
+  {year:-332,via:[at.marathus,at.byblos,at.sidon,at.tyre,at.gaza,at.pelusium,at.memphis]},
+  {year:-331,via:[at.alexandria,at.paraetonium,at.siwa,at.memphis,at.pelusium,at.gaza,at.tyre,at.thapsacus,at.gaugamela,at.arbela,at.babylon,at.susa]},
+  {year:-330,via:[at.persianGates,at.persepolis,at.ecbatana,at.rhagae,at.hecatompylos,at.zadracarta,at.artacoana,at.phrada]},
+  {year:-329,via:[at.arachosia,at.caucasus,at.drapsaka,at.bactra,at.maracanda,at.eschate]},
+  {year:-328,via:[at.bactra,at.maracanda,at.nautaka]},
+  {year:-327,via:[at.bactra,at.caucasus,at.nicaea]},
+  {year:-326,via:[at.peucelaotis,at.taxila,at.hydaspes,at.hyphasis,at.hydaspes]},
+  {year:-325,via:[at.malli,at.patala,at.oreitae,at.gedrosia,at.pura,at.carmania]},
+  {year:-324,via:[at.pasargadae,at.persepolis,at.susa,at.opis,at.ecbatana]},
+  {year:-323,via:[at.babylon]}
+ ]},
+ {id:'route-nearchus',title:'Nearchus’s fleet',mode:'sea',span:'campaign-alexander',start:at.patala,until:-323,legs:[
+  {year:-325,via:[at.indusMouth,at.ormara,at.gwadar,at.chabahar,at.harmozia]},
+  {year:-324,via:[at.qeshm,at.kish,at.bushehr,at.karunMouth,at.susa]}
+ ]},
+ {id:'route-seleucus',title:'Seleucus marches to Ipsus',span:'period-successors',start:at.babylon,until:-301,legs:[
+  {year:-302,certainty:'approximate',via:[at.samosata,at.mazaca]},
+  {year:-301,via:[at.ipsus]}
+ ]},
+ {id:'route-lysimachus',title:'Lysimachus marches to Ipsus',span:'period-successors',start:at.lysimachia,until:-301,legs:[
+  {year:-302,via:[at.lampsacus,at.dorylaeum,at.heraclea]},
+  {year:-301,via:[at.ipsus]}
+ ]},
+ {id:'route-antigonus',title:'Antigonus marches to Ipsus',span:'period-successors',start:at.antigonia,until:-301,legs:[
+  {year:-302,via:[at.cilicianGates,at.dorylaeum]},
+  {year:-301,via:[at.ipsus]}
+ ]}
+];
 // The successors' wars, until the empire's division is settled at Ipsus.
 export const successors: HistoricalEvent[] = [
  {id:'funeral',year:-321,certainty:'approximate',title:'A stolen funeral',place:'Memphis · Egypt',position:[31.25,29.85],kind:'political',description:'Ptolemy seizes Alexander’s funeral carriage on its way from Babylon and takes the body to Egypt; it later rests in Alexandria. The regent Perdiccas invades Egypt to punish him, but is killed by his own officers. The generals are now at war.'},

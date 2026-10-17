@@ -1,7 +1,8 @@
 // Curation adapter: original authored draft -> normalized, validated domain records.
 // Rendering never imports the draft or this adapter's private source shape.
-import {philip,events,successors,type HistoricalEvent} from './alexander-draft';
+import {philip,events,successors,routes,type HistoricalEvent} from './alexander-draft';
 import {loadDataset,fromEra} from '../domain/schema';
+import {routeFeatures} from '../domain/routes';
 import {polityEntity} from './polities';
 // The grouping also covers the regents Cliopatria maps as separate rows after Alexander’s death.
 const macedon=polityEntity('(Macedonian Empire)');
@@ -15,6 +16,10 @@ const spans:{id:string;title:string;kind:string;start:number;end:number;endExclu
  {id:'period-successors',title:'Wars of the successors',kind:'conflict',start:-322,end:-301,entityIds:[macedon.id,...heirs.map(e=>e.id)],events:successors,sourceIds:['source-diadochi','source-wp-alexander'],note:'Alexander’s generals fight over his empire until the battle of Ipsus in 301 BCE fixes its division. On the map: the Macedonian Empire (in Cliopatria also the lands of Antigonus and of Cassander, with the regents Perdiccas, Laomedon and Polyperchon), the Ptolemaic Kingdom, the Seleucid Empire and the Kingdom of Lysimachus. Independent scholarly review pending.'}
 ];
 const all=spans.flatMap(s=>s.events.map(e=>({e,s})));
+const routeSources:Record<string,string[]>={'campaign-alexander':['source-wp-alexander','source-editorial'],'period-successors':['source-diadochi','source-editorial']};
+const routeLegs=routes.flatMap(r=>routeFeatures({id:r.id,title:r.title,mode:r.mode,spanIds:[r.span],entityIds:spans.find(s=>s.id===r.span)!.entityIds,start:r.start,until:fromEra(-r.until,'BCE'),
+ legs:r.legs.map(l=>({year:fromEra(-l.year,'BCE'),certainty:l.certainty,via:l.via})),
+ provenance:{sourceIds:routeSources[r.span],status:'illustrative',method:'schematic route through attested stops',note:'Straight lines between the stops ancient writers record, one leg per year; the real paths followed rivers, roads and passes. Some stops have debated locations.'}}));
 export const alexander=loadDataset({schemaVersion:2,id:'dataset-alexander',title:'Alexander’s world',sources:[
  {id:'source-whe',title:'World History Encyclopedia — Alexander timeline',url:'https://www.worldhistory.org/timeline/Alexander_the_Great/',accessed:'2026-10-05',licenseNote:'Reference only; original paraphrased text, no copied media or geometry.'},
  {id:'source-met',title:'Metropolitan Museum — Rise of Macedon',url:'https://www.metmuseum.org/essays/the-rise-of-macedonia-and-the-conquests-of-alexander-the-great',accessed:'2026-10-05',licenseNote:'Reference only; no copied text or media.'},
@@ -26,4 +31,4 @@ export const alexander=loadDataset({schemaVersion:2,id:'dataset-alexander',title
  spans:spans.map(s=>({id:s.id,title:s.title,kind:s.kind,interval:{start:date(s.start),end:date(s.end),endExclusive:s.endExclusive??false},entityIds:s.entityIds,provenance:provenance(s.sourceIds,s.note)})),
  places:all.map(({e})=>({id:`place-alexander-${e.id}`,name:e.place,position:e.position,accuracy:'approximate',provenance:illustrative})),
  events:all.map(({e,s})=>({id:`event-alexander-${e.id}`,title:e.title,description:e.description,date:date(e.year,e.certainty),kind:e.kind,spanIds:[s.id],entityIds:s.entityIds,placeId:`place-alexander-${e.id}`,provenance:provenance(s.sourceIds,s.note)})),
- features:[]});
+ features:routeLegs});

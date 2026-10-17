@@ -9,9 +9,10 @@ const polygonIndex=catalog.features.findIndex(f=>f.geometry.type==='Polygon');
 const macedonIndex=catalog.features.findIndex(f=>f.spanIds.includes(period)&&f.interval.start.latest===fromEra(336,'BCE'));
 test('BCE / CE has no displayed year zero and arithmetic crosses the boundary correctly',()=>{assert.equal(fromEra(1,'BCE'),0);assert.equal(fromEra(1,'CE'),1);assert.equal(formatYear(0),'1 BCE');assert.equal(formatYear(-330),'331 BCE');assert.throws(()=>fromEra(0,'BCE'))});
 test('Alexander’s span shows one Macedonian Empire shape per year, then the regents beside it, only within the campaign dates',()=>{
- for(const [year,count] of [[337,0],[336,1],[331,1],[326,1],[323,3],[322,0]])assert.equal(featuresAt(catalog,fromEra(year,'BCE'),period).features.length,count);
- for(const year of [336,331,328,325])assert.deepEqual(featuresAt(catalog,fromEra(year,'BCE'),period).features.map(f=>f.properties?.title),['Macedonian Empire']);
- assert.deepEqual(featuresAt(catalog,fromEra(323,'BCE'),period).features.map(f=>f.properties?.title).sort(),['Laomedon','Macedonian Empire','Perdiccas']);
+ const shapesAt=(year:number)=>featuresAt(catalog,fromEra(year,'BCE'),period).features.filter(f=>f.geometry.type==='MultiPolygon');
+ for(const [year,count] of [[337,0],[336,1],[331,1],[326,1],[323,3],[322,0]])assert.equal(shapesAt(year).length,count);
+ for(const year of [336,331,328,325])assert.deepEqual(shapesAt(year).map(f=>f.properties?.title),['Macedonian Empire']);
+ assert.deepEqual(shapesAt(323).map(f=>f.properties?.title).sort(),['Laomedon','Macedonian Empire','Perdiccas']);
 });
 test('chronology selects the latest past event',()=>{assert.equal(latestEvent(alexander,period,fromEra(336,'BCE'))?.title,'A young king');assert.equal(latestEvent(alexander,period,fromEra(335,'BCE'))?.title,'The fall of Thebes')});
 test('timeline windows remain bounded and contain selected year',()=>{for(let y=-349;y<=-319;y++)for(const span of [5,10,15,20,25,30]){const [a,b]=timeWindow(y,span,[-349,-319]);assert.ok(a<=y&&b>=y&&a>=-349&&b<=-319);assert.equal(b-a,span)}});
@@ -32,7 +33,7 @@ test('27 BCE transition is not rendered as simultaneous Republic and Empire',()=
  assert.ok(after.includes('period-empire')&&!after.includes('period-republic'));
  assert.equal(combinedFeaturesAt(catalog,fromEra(27,'BCE')).features.filter(f=>f.geometry.type==='Point').length,1);
 });
-test('campaign geometry appears only within the campaign dates',()=>{
+test('campaign geometry and routes appear only within the campaign dates',()=>{
  assert.ok(!combinedFeaturesAt(catalog,fromEra(350,'BCE')).features.some(f=>f.properties?.spanId===period));
  assert.ok(combinedFeaturesAt(catalog,fromEra(331,'BCE')).features.some(f=>f.properties?.spanId===period));
 });
@@ -280,4 +281,25 @@ test('every curated span gets Cliopatria borders for the polities it is about',(
  assert.deepEqual(territorial(-301,'period-successors').map(f=>f.properties?.title).sort(),['Kingdom of Lysimachus','Macedonian Empire','Ptolemaic Kingdom','Seleucid Empire']);
  assert.ok(territorial(-316,'period-successors').some(f=>f.properties?.title==='Polyperchon'));
  assert.ok(!territorial(-314,'period-successors').some(f=>f.properties?.title==='Polyperchon'));
+});
+import {routeFeatures,arrivalBearing} from './routes';
+test('a route is yearly legs that join end to start and build up while the story plays',()=>{
+ const legs=catalog.features.filter(f=>f.relation==='route'&&f.id.startsWith('route-alexander-'));
+ assert.equal(legs.length,12);
+ assert.ok(legs.every(l=>l.routeId==='route-alexander'));
+ for(let i=1;i<legs.length;i++){const a=legs[i-1].geometry,b=legs[i].geometry;assert.ok(a.type==='LineString'&&b.type==='LineString');assert.deepEqual(a.coordinates.at(-1),b.coordinates[0])}
+ const shown=(year:number)=>combinedFeaturesAt(catalog,fromEra(year,'BCE')).features.filter(f=>f.geometry.type==='LineString'&&f.properties?.spanId==='campaign-alexander');
+ assert.equal(shown(335).length,0);assert.equal(shown(334).length,1);assert.equal(shown(331).length,4);
+ assert.ok(shown(325).some(f=>f.properties?.mode==='sea'&&f.properties?.start===fromEra(325,'BCE')));
+ assert.equal(shown(323).length,14);assert.equal(shown(322).length,0);
+ assert.deepEqual(combinedFeaturesAt(catalog,fromEra(301,'BCE')).features.filter(f=>f.geometry.type==='LineString').map(f=>f.properties?.title).sort().filter((t,i,a)=>a.indexOf(t)===i),['Antigonus marches to Ipsus','Lysimachus marches to Ipsus','Seleucus marches to Ipsus']);
+});
+test('routes are authored data only: stories with events but no routes get no arrows',()=>{
+ assert.ok(!catalog.features.some(f=>f.relation==='route'&&!f.spanIds.some(id=>['campaign-alexander','period-successors'].includes(id))));
+ const base={id:'route-test',title:'Test',spanIds:['conflict-ww2'],entityIds:[],start:[0,0] as [number,number],until:2,provenance:{sourceIds:['source-ww2-editorial'],status:'illustrative' as const,method:'test',note:'test'}};
+ assert.throws(()=>routeFeatures({...base,legs:[{year:2,via:[[1,1]]},{year:1,via:[[2,2]]}]}));
+ assert.throws(()=>routeFeatures({...base,until:0,legs:[{year:1,via:[[1,1]]}]}));
+ const d=structuredClone(catalog);d.features.find(f=>f.relation==='route')!.relation='control';assert.throws(()=>loadDataset(d));
+ const e=structuredClone(catalog);delete e.features.find(f=>f.relation==='route')!.routeId;assert.throws(()=>loadDataset(e));
+ assert.equal(Math.round(arrivalBearing([[0,0],[0,10]])),0);assert.equal(Math.round(arrivalBearing([[0,0],[10,0]])),90);assert.equal(Math.round(arrivalBearing([[0,0],[-10,0]])),270);
 });

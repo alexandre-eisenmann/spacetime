@@ -22,5 +22,5 @@ export function mergeDatasets(datasets:HistoricalDataset[]):HistoricalDataset {
 }
 export function combinedFeaturesAt(data:HistoricalDataset,year:number):FeatureCollection {
  const active=new Set(activeSpans(data,year).map(p=>p.id));
- return {type:'FeatureCollection',features:data.features.filter(f=>f.spanIds.some(id=>active.has(id))&&intervalContains(f.interval,year)).map(f=>({type:'Feature',id:f.id,properties:{title:f.title,spanId:f.spanIds.find(id=>active.has(id)),relation:f.relation,status:f.provenance.status},geometry:f.geometry}))};
+ return {type:'FeatureCollection',features:data.features.filter(f=>f.spanIds.some(id=>active.has(id))&&intervalContains(f.interval,year)).map(f=>({type:'Feature',id:f.id,properties:{title:f.title,spanId:f.spanIds.find(id=>active.has(id)),relation:f.relation,status:f.provenance.status,start:f.interval.start.latest,mode:f.mode,routeId:f.routeId},geometry:f.geometry}))};
 }

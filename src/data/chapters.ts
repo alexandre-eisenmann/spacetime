@@ -28,7 +28,6 @@ const rows:Row[]=[
  ['ming-qing','Ming and Qing China',1368,1912,['Ming Dynasty','Qing Dynasty','Southern Ming'],'Ming_dynasty','Five centuries of Ming and then Manchu Qing rule until the last emperor abdicates.','#8b5e3c'],
  ['renaissance','Renaissance and Reformation',1400,1648,[],'Renaissance','Humanism, printing and religious reform reshape Europe until the Peace of Westphalia.','#b07c4f'],
  ['discovery','Age of Discovery',1415,1600,['Portuguese Empire','Spanish Empire'],'Age_of_Discovery','Iberian voyages link the oceans, from Ceuta to the Pacific crossings.','#3f7a72'],
- ['aztec-inca','Aztec and Inca empires',1428,1572,['Aztec Triple Alliance','Inca Empire'],'Inca_Empire','The great American empires at their height and their conquest by Spain.','#7a7350'],
  ['mughals','Mughal India',1526,1857,['Mughal Empire'],'Mughal_Empire','From Babur’s victory at Panipat to the end of the dynasty after 1857.','#a0704a'],
  ['colonial','Colonial empires',1600,1914,['(British Empire)','(Spanish Empire)','(Portuguese Empire)','(Dutch Republic)','Dutch East Indies'],'Colonial_empire','European trading companies and states build overseas empires across Asia, Africa and the Americas.','#4f6f8f'],
  ['revolutions','Age of Revolutions',1765,1848,['United States of America','(French First Republic)','(French Directory)','(French Consulate)','(First French Empire)'],'Age_of_Revolution','American, French, Haitian and Latin American revolutions remake ideas of the state.','#9b5c62'],

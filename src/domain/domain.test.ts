@@ -229,19 +229,22 @@ test('polities and Cliopatria groupings are searchable by name',()=>{
 });
 import {playable,storyOf,storySearch,storyWindow,inStory} from '../data/stories';
 import {eventsFor} from './selectors';
-test('the two playable stories are Macedonian Empire and World War II',()=>{
- assert.deepEqual(playable.map(s=>s.title),['Macedonian Empire','World War II']);
- const macedon=playable[0],ww2=playable[1];
+test('the playable stories are the Macedonian, Aztec and Inca empires and World War II',()=>{
+ assert.deepEqual(playable.map(s=>s.title),['Macedonian Empire','Aztec Empire','Inca Empire','World War II']);
+ const macedon=playable[0],ww2=playable[3];
  assert.deepEqual(macedon.spanIds,['period-philip','campaign-alexander','period-successors']);
  assert.equal(ww2.spanIds[0],'conflict-ww2');
  assert.equal(storyOf('campaign-alexander')?.id,'story-macedon');
  assert.equal(storyOf('conflict-ww2')?.id,'story-ww2');
+ assert.equal(storyOf('conquest-mexico')?.id,'story-aztec');assert.equal(storyOf('period-cuzco')?.id,'story-inca');
 });
 test('stories are searchable ahead of the matching polity, including aliases',()=>{
  assert.equal(searchByName(storySearch,'macedon')[0]?.title,'Macedonian Empire');
  assert.equal(searchByName(storySearch,'alexander')[0]?.title,'Macedonian Empire');
  assert.equal(searchByName(storySearch,'ww2')[0]?.title,'World War II');
  assert.equal(searchByName(storySearch,'second world')[0]?.title,'World War II');
+ assert.equal(searchByName(storySearch,'moctezuma')[0]?.title,'Aztec Empire');
+ assert.equal(searchByName(storySearch,'machu picchu')[0]?.title,'Inca Empire');
 });
 test('a story window centred on its start keeps the whole storyline on stage',()=>{
  for(const s of playable){
@@ -252,11 +255,11 @@ test('a story window centred on its start keeps the whole storyline on stage',()
  }
  const [a,b]=storyWindow(playable[0]);
  assert.ok(a<=fromEra(356,'BCE')&&fromEra(323,'BCE')<=b);
- assert.ok(inStory(playable[0],fromEra(336,'BCE'))&&inStory(playable[1],1939)&&!inStory(playable[1],1914));
+ assert.ok(inStory(playable[0],fromEra(336,'BCE'))&&inStory(playable[3],1939)&&!inStory(playable[3],1914));
 });
 test('each playable story has located events students can follow on the map',()=>{
  const macedon=eventsFor(catalog,playable[0].spanIds);
- const war=eventsFor(catalog,playable[1].spanIds);
+ const war=eventsFor(catalog,playable[3].spanIds);
  assert.ok(macedon.length>=15&&war.length>=12);
  assert.ok(macedon.some(e=>e.title==='A young king'&&e.year===fromEra(336,'BCE')));
  assert.ok(macedon.some(e=>e.title==='Philip II becomes king'));
@@ -295,11 +298,22 @@ test('a route is yearly legs that join end to start and build up while the story
  assert.deepEqual(combinedFeaturesAt(catalog,fromEra(301,'BCE')).features.filter(f=>f.geometry.type==='LineString').map(f=>f.properties?.title).sort().filter((t,i,a)=>a.indexOf(t)===i),['Antigonus marches to Ipsus','Lysimachus marches to Ipsus','Seleucus marches to Ipsus']);
 });
 test('routes are authored data only: stories with events but no routes get no arrows',()=>{
- assert.ok(!catalog.features.some(f=>f.relation==='route'&&!f.spanIds.some(id=>['campaign-alexander','period-successors'].includes(id))));
+ assert.ok(!catalog.features.some(f=>f.relation==='route'&&!f.spanIds.some(id=>['campaign-alexander','period-successors','conquest-mexico','conquest-peru'].includes(id))));
  const base={id:'route-test',title:'Test',spanIds:['conflict-ww2'],entityIds:[],start:[0,0] as [number,number],until:2,provenance:{sourceIds:['source-ww2-editorial'],status:'illustrative' as const,method:'test',note:'test'}};
  assert.throws(()=>routeFeatures({...base,legs:[{year:2,via:[[1,1]]},{year:1,via:[[2,2]]}]}));
  assert.throws(()=>routeFeatures({...base,until:0,legs:[{year:1,via:[[1,1]]}]}));
  const d=structuredClone(catalog);d.features.find(f=>f.relation==='route')!.relation='control';assert.throws(()=>loadDataset(d));
  const e=structuredClone(catalog);delete e.features.find(f=>f.relation==='route')!.routeId;assert.throws(()=>loadDataset(e));
  assert.equal(Math.round(arrivalBearing([[0,0],[0,10]])),0);assert.equal(Math.round(arrivalBearing([[0,0],[10,0]])),90);assert.equal(Math.round(arrivalBearing([[0,0],[-10,0]])),270);
+});
+test('the Aztec and Inca stories follow Cliopatria’s growth and the conquest routes',()=>{
+ const aztec=eventsFor(catalog,playable[1].spanIds),inca=eventsFor(catalog,playable[2].spanIds);
+ assert.ok(aztec.length>=15&&inca.length>=12);
+ assert.ok(aztec.some(e=>e.title==='The fall of Tenochtitlan'&&e.year===1521)&&inca.some(e=>e.title==='Ambush at Cajamarca'&&e.year===1532));
+ const area=(year:number,name:string)=>combinedFeaturesAt(catalog,year).features.filter(f=>f.geometry.type==='MultiPolygon'&&f.properties?.title===name).length;
+ assert.ok(area(1400,'Tenochtitlan')&&area(1500,'Aztec Triple Alliance')&&area(1500,'Michoacán')&&!area(1521,'Aztec Triple Alliance'));
+ assert.ok(area(1420,'Cuzco')&&area(1500,'Inca Empire')&&area(1545,'Inca Empire'));
+ const legs=(year:number,span:string)=>combinedFeaturesAt(catalog,year).features.filter(f=>f.geometry.type==='LineString'&&f.properties?.spanId===span);
+ assert.equal(legs(1518,'conquest-mexico').length,0);assert.equal(legs(1521,'conquest-mexico').length,3);
+ assert.equal(legs(1533,'conquest-peru').length,4);assert.ok(legs(1531,'conquest-peru').some(f=>f.properties?.mode==='sea'));
 });

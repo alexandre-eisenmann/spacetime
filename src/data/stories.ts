@@ -32,6 +32,26 @@ export const playable:Story[]=[
   map:{center:[52,35],zoom:2.95}
  },
  {
+  id:'story-aztec',
+  title:'Aztec Empire',
+  aliases:['Aztecs','Aztec','Mexica','Tenochtitlan','Moctezuma','Montezuma','Cortés','Conquest of Mexico','Triple Alliance'],
+  subtitle:'From Tenochtitlan to the Spanish conquest',
+  spanIds:['period-mexica','period-triple-alliance','conquest-mexico'],
+  // The Triple Alliance of 1428 is where the empire begins; the founding legend stays in the window.
+  startYear:1428,from:1325,to:1521,windowYears:250,
+  map:{center:[-97.4,17.9],zoom:5.5}
+ },
+ {
+  id:'story-inca',
+  title:'Inca Empire',
+  aliases:['Inca','Incas','Inka','Tawantinsuyu','Cuzco','Cusco','Machu Picchu','Atahualpa','Pachacuti','Pizarro','Conquest of Peru'],
+  subtitle:'From Cuzco to the fall of Vilcabamba',
+  spanIds:['period-cuzco','period-inca','conquest-peru'],
+  // Under Topa Inca the empire grows fastest; Cuzco before Pachacuti and the conquest both stay in the window.
+  startYear:1471,from:1400,to:1572,windowYears:250,
+  map:{center:[-70,-13],zoom:2.7}
+ },
+ {
   id:'story-ww2',
   title:'World War II',
   aliases:['WW2','WWII','Second World War','World War 2','World War Two'],

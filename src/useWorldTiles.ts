@@ -2,8 +2,8 @@ import {useEffect,useMemo,useRef,useState} from 'react';
 import type {FeatureCollection,MultiPolygon} from 'geojson';
 import {asset} from './asset';
 
-// e: the editorial correction to Cliopatria's name or years for this row, if any.
-export type PolityProps={n:string;f:number;t:number;a:number;w?:string;e?:string;c:string;lx:number;ly:number};
+// e: the editorial correction to Cliopatria's name or years for this row, if any. s: the common name of a modern state.
+export type PolityProps={n:string;s?:string;f:number;t:number;a:number;w?:string;e?:string;c:string;lx:number;ly:number};
 export type WorldTile=FeatureCollection<MultiPolygon,PolityProps>;
 type WorldIndex={source:string;tiles:{start:number;end:number;url:string;count:number}[]};
 
@@ -36,5 +36,5 @@ export function useWorldTiles(year:number){
   if(features.length!==prev.length||features.some((f,i)=>f!==prev[i]))last.current={type:'FeatureCollection',features};
   return last.current;
  },[tile,url,year]);
- return {world,loading:!!url&&tile?.url!==url,error,covered:at>=0};
+ return {world,loading:!!url&&tile?.url!==url,error,covered:at>=0,latest:index?.tiles.at(-1)?.end};
 }

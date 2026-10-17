@@ -7,6 +7,7 @@ import {readFileSync,writeFileSync,mkdirSync,rmSync} from 'node:fs';
 import polylabel from 'polylabel';
 import {writePolities} from './import-polities';
 import {correctCliopatria} from './cliopatria-corrections';
+import {modernName} from './modern-names';
 
 const release='v0.2.1';
 const input=process.argv[2]??'data-raw/cliopatria_polities_only_v021.geojson';
@@ -54,7 +55,7 @@ for(const f of rows){
  if(!polygons.length){dropped++;continue}
  const largest=polygons.reduce((a,b)=>area(b[0])>area(a[0])?b:a);
  const [lx,ly]=polylabel(largest,0.05);
- features.push({type:'Feature',properties:{n:p.Name,f:astronomical(p.FromYear),t:astronomical(p.ToYear),a:Math.round(p.Area),w:p.Wikipedia||undefined,e:p.Correction,c:colour(p.Name),lx:Math.round(lx*100)/100,ly:Math.round(ly*100)/100},geometry:{type:'MultiPolygon',coordinates:polygons}});
+ features.push({type:'Feature',properties:{n:p.Name,s:modernName(p.Name,p.FromYear),f:astronomical(p.FromYear),t:astronomical(p.ToYear),a:Math.round(p.Area),w:p.Wikipedia||undefined,e:p.Correction,c:colour(p.Name),lx:Math.round(lx*100)/100,ly:Math.round(ly*100)/100},geometry:{type:'MultiPolygon',coordinates:polygons}});
 }
 
 rmSync(outDir,{recursive:true,force:true});mkdirSync(outDir,{recursive:true});

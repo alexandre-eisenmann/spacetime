@@ -94,6 +94,30 @@ main{max-width:1600px;margin:auto;padding:0 32px}
 .map-legend{position:absolute;top:22px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:6px;font-size:12px;color:#3b4459;white-space:nowrap;background:#ffffffd9;padding:4px 10px;border-radius:6px}
 .map-legend>span{height:10px;width:14px;border:2px solid var(--ink);border-radius:2px}
 .map-credit{position:absolute;right:10px;bottom:6px;font-size:10px;color:#3e5568}
+/* Before and after: the comparison map lies over the main map and lets pointer input through to it. */
+.compare-map{pointer-events:none}
+.compare-map .maplibregl-popup{pointer-events:auto}
+.compare-divider{position:absolute;top:0;bottom:0;width:0;pointer-events:none}
+.compare-divider::before{content:'';position:absolute;top:0;bottom:0;left:-1px;width:2px;background:#fff;box-shadow:0 0 6px #1d274066}
+.compare-divider.closed::before{display:none}
+.compare-handle{position:absolute;top:50%;left:0;translate:-50% -50%;pointer-events:auto;display:flex;align-items:center;justify-content:center;gap:7px;height:40px;min-width:40px;padding:0 10px;border-radius:999px;background:#fff;color:var(--ink);box-shadow:var(--shadow);font-size:13px;font-weight:600;white-space:nowrap;cursor:ew-resize;touch-action:none;transition:scale .15s}
+.compare-handle:hover{scale:1.06}
+.compare-handle:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+/* Closed, the handle waits just inside the right edge and pulses gently to invite a drag. */
+.compare-divider.closed .compare-handle{translate:calc(-100% - 14px) -50%;color:var(--accent);cursor:pointer;animation:compare-pulse 2.6s ease-out 1s infinite}
+.compare-divider.closed .compare-handle:hover{animation:none;scale:1.08}
+@keyframes compare-pulse{0%{box-shadow:var(--shadow),0 0 0 0 #2a56c666}60%,100%{box-shadow:var(--shadow),0 0 0 12px #2a56c600}}
+@media(prefers-reduced-motion:reduce){.compare-divider.closed .compare-handle{animation:none}}
+.compare-chip{position:absolute;top:calc(50% - 62px);pointer-events:auto;display:flex;align-items:center;gap:4px;height:30px;padding:0 10px;border-radius:8px;background:#fffffff2;box-shadow:var(--shadow);font-size:13px;font-weight:700;white-space:nowrap}
+.compare-chip.before{right:12px}
+.compare-chip.after{left:12px;padding-right:3px}
+.compare-chip input{width:3.2em;border:0;border-bottom:1px dashed var(--line-strong);background:transparent;font:inherit;color:inherit;padding:0;outline:none;text-align:right}
+.compare-chip input::placeholder{color:var(--ink);opacity:1}
+.compare-chip input:focus::placeholder{color:var(--faint)}
+.compare-chip select{border:0;background:transparent;font:inherit;font-weight:600;color:var(--muted);cursor:pointer}
+.compare-chip small{font-size:11px;font-weight:500;color:var(--muted)}
+.compare-chip button{display:grid;place-items:center;padding:4px;border-radius:6px;color:var(--muted)}
+.compare-chip button:hover{background:var(--sunk);color:var(--ink)}
 .story-card{max-height:calc(100% - var(--deck) - 28px);overflow:auto}
 /* Time scrubber docked under the map: overview line for long jumps, ruler under a fixed needle for fine moves. */
 .map-scrubber{position:relative;--yearbox:calc(var(--pad) + 230px);padding:0 var(--edge);background:var(--surface);border-top:1px solid var(--line-strong);outline:none;-webkit-user-select:none;user-select:none}
@@ -342,6 +366,7 @@ footer button{display:flex;align-items:center;gap:6px;font-weight:600;color:var(
  .story-card h2{font-size:20px;margin:6px 0}
  .story-card p{font-size:13px}
  .map-controls{right:12px}
+ .compare-divider.closed .compare-handle{translate:calc(-100% - 10px) -50%}
  .map-credit{left:12px;right:auto;bottom:1px;font-size:9px}
  .atlas-shell{--pad:12px;--gutter:5px}
  .time-bar{gap:10px}

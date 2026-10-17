@@ -1,17 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import maplibregl from 'maplibre-gl';
-import type { FeatureCollection, LineString } from 'geojson';
 import { Plus, Minus, LocateFixed, Globe2 } from 'lucide-react';
 import { combinedFeaturesAt, activeSpans } from './domain/selectors';import { formatYear, type HistoricalDataset } from './domain/schema';
 import { asset } from './asset';
 import { arrivalBearing } from './domain/routes';
 import type {WorldTile,PolityProps} from './useWorldTiles';
 import type {PersonEntry} from './domain/timeline';
+import {graticule,worldLayers,addPlaceNames,addPolityLabels,fitPolityLabels,polityPopup,escape} from './mapStyle';
+import {CompareSlider,type CompareProps,type CompareSide} from './CompareSlider';
 import 'maplibre-gl/dist/maplibre-gl.css';
-const wikipedia=(phrase:string)=>`https://en.wikipedia.org/wiki/${encodeURIComponent(phrase.replaceAll(' ','_'))}`;
-const escape=(s:string)=>s.replace(/[&<>"']/g,c=>`&#${c.charCodeAt(0)};`);
-// Labels appear by polity size: about 300,000 km² at the default zoom, four times smaller per zoom level.
-const labelThreshold=(zoom:number)=>3e5*4**(2.8-zoom);
 // Routes: a white casing, a dark ink line (dashed at sea) and one arrowhead at the front of each route. One ink
 // for every story, since a story's own colour is also the fill of the territories its routes cross. The head is
 // offset back so its tip, not its centre, sits on the line's end.
@@ -37,7 +34,8 @@ function arrowIcon(size=40){
 }
 // Space for the story card on the left of wide maps.
 const cardPadding=()=>window.innerWidth<600?{top:60,bottom:60,left:30,right:60}:{top:65,bottom:40,left:350,right:70};
-export function Atlas({data,world,colors,cameraSpan,year,showRegions,showWorld,showEvents,highlight,flyTo,person,view,trail,onSelect,onSpan,onInspect}:{data:HistoricalDataset;world:WorldTile;colors:Record<string,string>;cameraSpan:string;year:number;showRegions:boolean;showWorld:boolean;showEvents:boolean;highlight:string[];flyTo?:string;person:PersonEntry|null;view?:{key:string;center:[number,number];zoom:number};trail?:string[];onSelect:(id:string)=>void;onSpan:(id:string)=>void;onInspect:()=>void}) {
+export function Atlas({data,world,compare,colors,cameraSpan,year,showRegions,showWorld,showEvents,highlight,flyTo,person,view,trail,onSelect,onSpan,onInspect}:{data:HistoricalDataset;world:WorldTile;compare:CompareProps;colors:Record<string,string>;cameraSpan:string;year:number;showRegions:boolean;showWorld:boolean;showEvents:boolean;highlight:string[];flyTo?:string;person:PersonEntry|null;view?:{key:string;center:[number,number];zoom:number};trail?:string[];onSelect:(id:string)=>void;onSpan:(id:string)=>void;onInspect:()=>void}) {
+ const side=useRef<CompareSide>({split:1,map:null});
  const personMarker=useRef<maplibregl.Marker|null>(null);
  const polityLabels=useRef<maplibregl.Marker[]>([]),labelUpdate=useRef(()=>{});
  const events=data.events.map(e=>({...e,year:e.date.latest,position:data.places.find(p=>p.id===e.placeId)!.position}));
@@ -51,11 +49,8 @@ export function Atlas({data,world,colors,cameraSpan,year,showRegions,showWorld,s
  useEffect(()=>{
   if(!host.current)return;
   setReady(false);
-  const grid:FeatureCollection<LineString>={type:'FeatureCollection',features:[]};
-  for(let x=-180;x<=180;x+=15)grid.features.push({type:'Feature',properties:{},geometry:{type:'LineString',coordinates:[[x,-80],[x,80]]}});
-  for(let y=-75;y<=75;y+=15)grid.features.push({type:'Feature',properties:{},geometry:{type:'LineString',coordinates:Array.from({length:37},(_,i)=>[-180+i*10,y])}});
   let m:maplibregl.Map;
-  try {m=new maplibregl.Map({container:host.current,center:[31,37],zoom:2.8,minZoom:0.5,maxZoom:7,attributionControl:false,renderWorldCopies:false,scrollZoom:false,dragPan:false,touchZoomRotate:false,touchPitch:false,style:{version:8,sources:{land:{type:'geojson',data:asset('/data/land.geojson')},grid:{type:'geojson',data:grid},world:{type:'geojson',data:{type:'FeatureCollection',features:[]}},regions:{type:'geojson',data:{type:'FeatureCollection',features:[]}},routes:{type:'geojson',data:{type:'FeatureCollection',features:[]}},routeHeads:{type:'geojson',data:{type:'FeatureCollection',features:[]}}},layers:[{id:'water',type:'background',paint:{'background-color':'#c6dcea'}},{id:'land',type:'fill',source:'land',paint:{'fill-color':'#f3f0e7'}},{id:'world-fill',type:'fill',source:'world',paint:{'fill-color':['get','c'],'fill-opacity':0.5}},{id:'world-fill-hi',type:'fill',source:'world',filter:['==',['get','n'],''],paint:{'fill-color':['get','c'],'fill-opacity':0.78}},{id:'coast',type:'line',source:'land',paint:{'line-color':'#9fb6c6','line-width':1}},{id:'world-line',type:'line',source:'world',paint:{'line-color':'#48506a','line-opacity':0.45,'line-width':['interpolate',['linear'],['zoom'],1,0.3,6,1]}},{id:'world-line-hi',type:'line',source:'world',filter:['==',['get','n'],''],paint:{'line-color':'#1d2740','line-width':2.8}},{id:'grid',type:'line',source:'grid',paint:{'line-color':'#5f87a3','line-opacity':0.12,'line-width':0.7}},{id:'regions',type:'fill',source:'regions',paint:{'fill-color':['coalesce',['get','color'],'#ad774d'],'fill-opacity':['case',['==',['get','relation'],'control'],0.22,0.18]}},{id:'region-lines',type:'line',source:'regions',filter:['==',['get','relation'],'control'],paint:{'line-color':['get','color'],'line-opacity':0.95,'line-width':2.2}},{id:'sphere-lines',type:'line',source:'regions',filter:['!=',['get','relation'],'control'],paint:{'line-color':['get','color'],'line-opacity':0.9,'line-width':1.3,'line-dasharray':[3,2]}},...routeLayers]}});}catch{setError('This atlas needs a browser with WebGL enabled. The timeline is still available.');return;}
+  try {m=new maplibregl.Map({container:host.current,center:[31,37],zoom:2.8,minZoom:0.5,maxZoom:7,attributionControl:false,renderWorldCopies:false,scrollZoom:false,dragPan:false,touchZoomRotate:false,touchPitch:false,style:{version:8,sources:{land:{type:'geojson',data:asset('/data/land.geojson')},grid:{type:'geojson',data:graticule()},world:{type:'geojson',data:{type:'FeatureCollection',features:[]}},regions:{type:'geojson',data:{type:'FeatureCollection',features:[]}},routes:{type:'geojson',data:{type:'FeatureCollection',features:[]}},routeHeads:{type:'geojson',data:{type:'FeatureCollection',features:[]}}},layers:[...worldLayers(true),{id:'regions',type:'fill',source:'regions',paint:{'fill-color':['coalesce',['get','color'],'#ad774d'],'fill-opacity':['case',['==',['get','relation'],'control'],0.22,0.18]}},{id:'region-lines',type:'line',source:'regions',filter:['==',['get','relation'],'control'],paint:{'line-color':['get','color'],'line-opacity':0.95,'line-width':2.2}},{id:'sphere-lines',type:'line',source:'regions',filter:['!=',['get','relation'],'control'],paint:{'line-color':['get','color'],'line-opacity':0.9,'line-width':1.3,'line-dasharray':[3,2]}},...routeLayers]}});}catch{setError('This atlas needs a browser with WebGL enabled. The timeline is still available.');return;}
   map.current=m;
   // Page scrolling passes over the map until the reader clicks or taps it; leaving the map hands scrolling back to the page.
   const el=host.current,stage=el.parentElement??el,gestures=[m.scrollZoom,m.dragPan,m.touchZoomRotate,m.touchPitch];
@@ -77,27 +72,37 @@ export function Atlas({data,world,colors,cameraSpan,year,showRegions,showWorld,s
   m.addControl(new maplibregl.ScaleControl({maxWidth:100,unit:'metric'}),'bottom-left');
   m.on('mouseenter','world-fill',()=>{m.getCanvas().style.cursor='pointer'});
   m.on('mouseleave','world-fill',()=>{m.getCanvas().style.cursor=''});
+  const compared=(p:maplibregl.Point)=>!!side.current.map&&p.x>=side.current.split*m.getContainer().clientWidth;
   for(const id of routeLineIds){
    m.on('mouseenter',id,()=>{m.getCanvas().style.cursor='pointer'});
    m.on('mouseleave',id,()=>{m.getCanvas().style.cursor=''});
    m.on('click',id,e=>{
+    if(compared(e.point))return;
     const p=e.features?.[0]?.properties as {title:string;start:number;now:boolean}|undefined;if(!p)return;
     inspect.current();
     new maplibregl.Popup({closeButton:true,maxWidth:'240px',className:'polity-popup'}).setLngLat(e.lngLat).setHTML(`<strong>${escape(p.title)}</strong><span>${p.now?'On the move in':'Route taken in'} ${formatYear(p.start)}</span><small>Straight lines between recorded stops, not the exact path</small>`).addTo(m);
    });
   }
-  m.on('click','world-fill',e=>{
+  m.on('click',e=>{
+   if(!m.getLayer('world-fill'))return;
+   // Right of the divider the reader sees the comparison map, so the popup describes its borders.
+   const other=side.current.map;
+   if(other&&compared(e.point)){
+    const p=other.queryRenderedFeatures(e.point,{layers:['world-fill']})[0]?.properties as Partial<PolityProps>&{n:string;f:number;t:number}|undefined;if(!p)return;
+    inspect.current();
+    new maplibregl.Popup({closeButton:true,maxWidth:'240px',className:'polity-popup'}).setLngLat(e.lngLat).setHTML(polityPopup(p)).addTo(other);
+    return;
+   }
+   if(m.getLayoutProperty('world-fill','visibility')==='none')return;
    if(m.getLayoutProperty('route-line','visibility')!=='none'&&m.queryRenderedFeatures(e.point,{layers:routeLineIds}).length)return;
-   const p=e.features?.[0]?.properties as Partial<PolityProps>&{n:string;f:number;t:number}|undefined;if(!p)return;
+   const p=m.queryRenderedFeatures(e.point,{layers:['world-fill']})[0]?.properties as Partial<PolityProps>&{n:string;f:number;t:number}|undefined;if(!p)return;
    inspect.current();
-   const link=p.w?`<a href="${wikipedia(p.w)}" target="_blank" rel="noreferrer">Wikipedia ↗</a>`:'';
-   new maplibregl.Popup({closeButton:true,maxWidth:'240px',className:'polity-popup'}).setLngLat(e.lngLat).setHTML(`<strong>${escape(p.n)}</strong><span>This border: ${formatYear(p.f)} – ${formatYear(p.t)}</span><small>Border from Cliopatria</small>${p.e?`<small>${escape(p.e)}</small>`:''}${link}`).addTo(m);
+   new maplibregl.Popup({closeButton:true,maxWidth:'240px',className:'polity-popup'}).setLngLat(e.lngLat).setHTML(polityPopup(p)).addTo(m);
   });
-  const placeLabels=()=>{const min=labelThreshold(m.getZoom());let shown=0;polityLabels.current.forEach(marker=>{const area=Number(marker.getElement().dataset.area);const show=area>=min&&shown<70;if(show)shown++;marker.getElement().style.display=show?'block':'none'})};
+  const placeLabels=()=>fitPolityLabels(polityLabels.current,m.getZoom());
   m.on('zoomend',placeLabels);
   labelUpdate.current=placeLabels;
-  const labels:[string,number,number,string][]=[['EUROPE',15,51,'continent'],['AFRICA',17,20,'continent'],['ASIA',72,48,'continent'],['Mediterranean Sea',18,34,'sea'],['Arabian Sea',63,19,'sea'],['Black Sea',34,43,'sea']];
-  labels.forEach(([text,x,y,kind])=>{const el=document.createElement('span');el.className=`map-label ${kind}`;el.textContent=text;el.setAttribute('aria-hidden','true');new maplibregl.Marker({element:el}).setLngLat([x,y]).addTo(m);});
+  addPlaceNames(m,['continent','sea']);
   markers.current=events.map(e=>{const el=document.createElement('button');el.className='event-pin event-diamond';el.title=`${e.title} · ${formatYear(e.year)}`;el.setAttribute('aria-label',el.title);el.style.display='none';el.onclick=event=>{event.stopPropagation();selection.current(e.id)};return new maplibregl.Marker({element:el}).setLngLat(e.position).addTo(m)});
   placeMarkers.current=places.map((f,index)=>{const el=document.createElement('button');el.className='place-pin';el.style.display='none';el.style.setProperty('--pin-color',colors[f.spanIds[0]]);const name=document.createElement('span');name.textContent=f.title;if(index>0&&f.geometry.type==='Point'){const previous=places[index-1].geometry;if(previous.type==='Point'&&Math.abs(previous.coordinates[0]-f.geometry.coordinates[0])<3&&Math.abs(previous.coordinates[1]-f.geometry.coordinates[1])<3)name.style.top='13px'}el.appendChild(name);el.title=`${f.title} · reference location, not territorial extent`;el.setAttribute('aria-label',el.title);el.onclick=()=>spanSelection.current(f.spanIds[0]);return new maplibregl.Marker({element:el}).setLngLat(f.geometry.type==='Point'?f.geometry.coordinates:[0,0]).addTo(m)});
   return ()=>{clearTimeout(hintTimer);el.removeEventListener('pointerdown',onDown,true);el.removeEventListener('click',onTap,true);el.removeEventListener('wheel',onWheel,true);el.removeEventListener('touchstart',onTouch);stage.removeEventListener('pointerleave',onLeave);document.removeEventListener('pointerdown',onOutside,true);removeEventListener('pointerup',onRelease);removeEventListener('keydown',onKey);el.classList.remove('is-engaged');m.remove();placeMarkers.current=[];regionKey.current='';routeKey.current='';polityLabels.current=[];personMarker.current=null;map.current=null;markers.current=[]};
@@ -108,7 +113,7 @@ export function Atlas({data,world,colors,cameraSpan,year,showRegions,showWorld,s
   ['world-fill','world-line','world-fill-hi','world-line-hi'].forEach(id=>m.setLayoutProperty(id,'visibility',showWorld?'visible':'none'));
   m.getContainer().querySelectorAll<HTMLElement>('.map-label.continent').forEach(el=>{el.style.visibility=showWorld?'hidden':'visible'});
   polityLabels.current.forEach(l=>l.remove());
-  polityLabels.current=showWorld?[...world.features].sort((a,b)=>b.properties.a-a.properties.a).map(f=>{const el=document.createElement('span');el.className='map-label polity';el.textContent=f.properties.n;el.dataset.area=String(f.properties.a);el.setAttribute('aria-hidden','true');return new maplibregl.Marker({element:el}).setLngLat([f.properties.lx,f.properties.ly]).addTo(m)}):[];
+  polityLabels.current=showWorld?addPolityLabels(m,world):[];
   labelUpdate.current();
   const filter:maplibregl.FilterSpecification=['in',['get','n'],['literal',highlight]];
   m.setFilter('world-fill-hi',filter);m.setFilter('world-line-hi',filter);
@@ -170,5 +175,5 @@ export function Atlas({data,world,colors,cameraSpan,year,showRegions,showWorld,s
   flownStory.current=view.key;
   map.current.flyTo({center:view.center,zoom:view.zoom,padding:cardPadding(),duration:1600,essential:true});
  },[view?.key,ready]);
- return <><div ref={host} className="map-canvas" aria-label="Interactive historical world map"/>{hint&&<div className="map-hint" aria-hidden="true">{hint}</div>}{error&&<div role="alert" className="map-error">{error}</div>}<div className="map-controls"><button title="Zoom in on map" aria-label="Zoom in on map" onClick={()=>map.current?.zoomIn()}><Plus size={18}/></button><button title="Zoom out on map" aria-label="Zoom out on map" onClick={()=>map.current?.zoomOut()}><Minus size={18}/></button><span/><button title="Fit selected territories" aria-label="Fit selected territories" onClick={fit}><LocateFixed size={18}/></button><button title="View whole world" aria-label="View whole world" onClick={()=>map.current?.flyTo({center:[20,20],zoom:0.8})}><Globe2 size={18}/></button></div></>;
+ return <><div ref={host} className="map-canvas" aria-label="Interactive historical world map"/>{ready&&showWorld&&map.current&&<CompareSlider leader={map.current} side={side} shown={year} {...compare}/>}{hint&&<div className="map-hint" aria-hidden="true">{hint}</div>}{error&&<div role="alert" className="map-error">{error}</div>}<div className="map-controls"><button title="Zoom in on map" aria-label="Zoom in on map" onClick={()=>map.current?.zoomIn()}><Plus size={18}/></button><button title="Zoom out on map" aria-label="Zoom out on map" onClick={()=>map.current?.zoomOut()}><Minus size={18}/></button><span/><button title="Fit selected territories" aria-label="Fit selected territories" onClick={fit}><LocateFixed size={18}/></button><button title="View whole world" aria-label="View whole world" onClick={()=>map.current?.flyTo({center:[20,20],zoom:0.8})}><Globe2 size={18}/></button></div></>;
 }

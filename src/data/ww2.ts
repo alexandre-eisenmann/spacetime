@@ -29,7 +29,7 @@ export const ww2=loadDataset({schemaVersion:2,id:'dataset-ww2',title:'World War 
  sources:[
   {id:'source-ww2-wikipedia',title:'Wikipedia — World War II',url:'https://en.wikipedia.org/wiki/World_War_II',accessed:'2026-10-07',licenseNote:'Chronology reference only; original paraphrased text.'},
   {id:'source-ww2-ushmm',title:'United States Holocaust Memorial Museum — World War II: key dates',url:'https://encyclopedia.ushmm.org/content/en/article/world-war-ii-key-dates',accessed:'2026-10-07',licenseNote:'Chronology reference only; no copied text or media.'},
-  {id:'source-ww2-editorial',title:'Spacetime reference coordinates',localPath:'src/data/ww2.ts',accessed:'2026-10-07',licenseNote:'Original approximate coordinates for orientation.'}
+  {id:'source-ww2-editorial',title:'spacetime reference coordinates',localPath:'src/data/ww2.ts',accessed:'2026-10-07',licenseNote:'Original approximate coordinates for orientation.'}
  ],
  entities:axis,
  spans:[{id:'conflict-ww2',title:'World War II',kind:'conflict',interval:{start:{earliest:1937,latest:1939,precision:'year',certainty:'disputed'},end:year(1945),endExclusive:false},entityIds:axis.map(e=>e.id),provenance:{...provenance,note:'The war began in 1937 in China and in 1939 in Europe, so the start is shown as disputed. On the map: the Axis powers (Nazi Germany, the Kingdom of Italy and the Empire of Japan) in each year. Independent review pending.'}}],

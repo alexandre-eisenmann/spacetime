@@ -7,7 +7,7 @@ const locationProvenance={sourceIds:['source-antiquity-editorial'],status:'illus
 const subjects=(p:(typeof spans)[number])=>p.polities?p.polities.map(polityEntity):[{id:p.entity!,name:p.name!,kind:'polity' as const}];
 const entityIds=(p:(typeof spans)[number])=>subjects(p).map(e=>e.id);
 export const antiquity=loadDataset({schemaVersion:2,id:'dataset-antiquity',title:'Mediterranean and Persian histories',
- sources:[...sources.map(s=>({...s,accessed:'2026-10-05',licenseNote:'Chronological reference only; original concise paraphrases. No source artwork or geometry reproduced.'})),{id:'source-antiquity-editorial',title:'Spacetime editorial reference coordinates',localPath:'src/data/antiquity-draft.ts',accessed:'2026-10-05',licenseNote:'Original approximate coordinates for orientation.'}],
+ sources:[...sources.map(s=>({...s,accessed:'2026-10-05',licenseNote:'Chronological reference only; original concise paraphrases. No source artwork or geometry reproduced.'})),{id:'source-antiquity-editorial',title:'spacetime editorial reference coordinates',localPath:'src/data/antiquity-draft.ts',accessed:'2026-10-05',licenseNote:'Original approximate coordinates for orientation.'}],
  entities:[...new Map(spans.flatMap(subjects).map(e=>[e.id,e])).values()],
  spans:spans.map(p=>({id:p.id,title:p.title,kind:'era',interval:{start:date(p.start),end:date(p.end),endExclusive:p.endExclusive??false},entityIds:entityIds(p),provenance:provenance(p.source,p.note)})),
  places:places.map(p=>({...p,accuracy:'approximate',provenance:locationProvenance})),
